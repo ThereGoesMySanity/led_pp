@@ -42,7 +42,7 @@ void Connection::test() {
     send(sock, msg, strlen(msg), 0);
 }
 */
-bool Connection::getPP(float *f) {
+bool Connection::getData(float *f) {
     int result = read(sock, buffer, 256);
     f = (float*)buffer;
     return result > 0;

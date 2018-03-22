@@ -14,13 +14,13 @@ int main(int argc, char** argv) {
     
     Display d(mat);
     //TODO: get pp from osu!api
-    d.setMaxPP(270);
+    d.setTopPP(270);
     d.Start();
 
-    float *pp;
+    float *data;
     while(connected) {
-        while(c.getPP(pp)){
-            d.setPP(pp);
+        while(c.getData(data)){
+            d.setData(data);
         }
         connected = c.connect();
     }

@@ -8,7 +8,7 @@ class Connection {
     public:
         Connection();
         bool connect();
-        bool getPP(float* f);
+        bool getData(float* f);
     private:
         int sock, server_fd;
         struct sockaddr_in address;
