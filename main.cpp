@@ -11,17 +11,16 @@ int main(int argc, char** argv) {
 
     Connection c;
     bool connected = c.connect();
-    
+    void *data = c.bufferAddr();
+
     Display d(mat);
     //TODO: get pp from osu!api
     d.setTopPP(270);
+    d.setData((float*)data, ((int*)data)+3);
     d.Start();
 
-    float *data;
     while(connected) {
-        while(c.getData(data)){
-            d.setData(data);
-        }
+        while(c.getData()) ;
         connected = c.connect();
     }
     delete mat;

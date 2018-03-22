@@ -32,6 +32,7 @@ bool Connection::connect() {
         return false;
     }
     printf("connection accepted\n");
+    buffer[0] = 0;
     return true;
 }
 /*
@@ -42,8 +43,10 @@ void Connection::test() {
     send(sock, msg, strlen(msg), 0);
 }
 */
-bool Connection::getData(float *f) {
+bool Connection::getData() {
     int result = read(sock, buffer, 256);
-    f = (float*)buffer;
     return result > 0;
+}
+void* Connection::bufferAddr() {
+    return (void*)buffer;
 }

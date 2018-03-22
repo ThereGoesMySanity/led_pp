@@ -8,10 +8,10 @@ class Connection {
     public:
         Connection();
         bool connect();
-        bool getData(float* f);
+        bool getData();
+        void* bufferAddr();
     private:
         int sock, server_fd;
         struct sockaddr_in address;
-        const char *quit = "quit";
         char buffer[256];
 };
