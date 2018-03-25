@@ -15,7 +15,7 @@ int main(int argc, char** argv) {
 
     Display d(mat);
     //TODO: get pp from osu!api
-    d.setTopPP(270);
+    d.addLine(270);
     d.setData((float*)data, ((int*)data)+3);
     d.Start();
 

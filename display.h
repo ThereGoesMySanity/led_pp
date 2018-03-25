@@ -1,4 +1,5 @@
 #include <set>
+#include <string>
 #include <math.h>
 #include <unistd.h>
 #include "rpi-rgb-led-matrix/include/led-matrix.h"
@@ -9,7 +10,7 @@
 using namespace rgb_matrix;
 
 const struct Color FC_LINE(200, 200, 200);
-const struct Color TOP_PLAY(200,200,200);
+const struct Color LINE_COLOR(200,200,200);
 const struct Color CURRENT_PLAY(100,100,0);
 
 const struct Color c300(0, 200, 200);
@@ -39,6 +40,7 @@ class Display : public ThreadedCanvasManipulator {
         static const int numModes = 2;
         static Mode modes[numModes];
     private:
+        Font font;
         int id;
         float *m_pp_data;
         int *m_hit_data;

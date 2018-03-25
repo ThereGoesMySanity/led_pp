@@ -3,7 +3,7 @@
 Mode Display::modes[numModes] = MODES;
 
 Display::Display(RGBMatrix *mat) : ThreadedCanvasManipulator(mat) {
-
+    font.LoadFont("rpi-rgb-led-matrix/fonts/tom-thumb.bdf");
 }
 void Display::Run() {
     while(running()) {
@@ -15,19 +15,24 @@ void Display::Run() {
                 switch(modes[m]) {
                     case LINES:
                         {
-                            int scale;
-                            if(m_topPP > M_RT_PP) {
-                                scale = ceil(m_topPP/64);
-                            } else {
-                                scale = ceil(M_RT_PP/64);
+                            int scale = ceil(M_RT_PP/64);
+                            for(float pp : m_pp_lines) {
+                                if(pp > M_RT_PP) {
+                                    scale = ceil(pp/64);
+                                    break;
+                                }
                             }
                             for(int x = 0; x < 64; x++) {
                                 if(scale*x < M_RT_PP) {
                                     DrawLine(canvas(), 64-x, y1, 64-x, y2, CURRENT_PLAY);
                                 }
                             }
-                            int hi = (int)(m_topPP/scale);
-                            DrawLine(canvas(), 64-hi, y1, 64-hi, y2, TOP_PLAY);
+                            for(float pp : m_pp_lines) {
+                                std::string ppstr = std::to_string((int)pp);
+                                int hi = (int)(pp/scale);
+                                DrawLine(canvas(), 64-hi, y1, 64-hi, y2, LINE_COLOR);
+                                VerticalDrawText(canvas(), font, 63-hi, y1, LINE_COLOR, NULL, ppstr.c_str());
+                            }
                         }
                         break;
                     case PP_IF_FC:
