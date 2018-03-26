@@ -22,11 +22,12 @@ int main(int argc, char** argv) {
     d.addLine(270);
     d.addLine(500);
     d.addLine(850);
-    d.setData((float*)data, ((int*)data)+3);
+    d.setData((float*)data, (int*)data + 3);
     d.Start();
 
     while(connected) {
         while(c.getData()) ;
+        ((float*)data)[0] = 0;
         connected = c.connect();
     }
     delete mat;
