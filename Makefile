@@ -1,6 +1,5 @@
 CXXFLAGS=-std=c++11
 OBJECTS=main.cpp display.cpp connection.cpp
-LDFLAGS+=-lncurses
 
 RGB_LIB_DISTRIBUTION=rpi-rgb-led-matrix
 RGB_INCDIR=$(RGB_LIB_DISTRIBUTION)/include

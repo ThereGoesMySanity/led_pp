@@ -1,4 +1,7 @@
 #include <set>
+#include <vector>
+#include <iterator>
+#include <algorithm>
 #include <string>
 #include <math.h>
 #include <unistd.h>
@@ -27,18 +30,16 @@ const struct Color cMiss(200, 0, 0);
 #define M_5 m_hit_data[2]
 #define M_MISS m_hit_data[3]
 
-#define MODES {PP_IF_FC, LINES}
-
 enum Mode {LINES, PP_IF_FC, ACC, TOP_PLAYS};
 
 class Display : public ThreadedCanvasManipulator {
     public:
-        Display(RGBMatrix *mat);
+        Display(RGBMatrix *mat, int num, Mode* m);
         void setData(float*, int*);
         void addLine(float);
+        void addMode(Mode);
         virtual void Run();
-        static const int numModes = 2;
-        static Mode modes[numModes];
+        std::vector<Mode> modes;
     private:
         Font font;
         int id;

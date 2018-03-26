@@ -13,9 +13,15 @@ int main(int argc, char** argv) {
     bool connected = c.connect();
     void *data = c.bufferAddr();
 
-    Display d(mat);
+    Mode modes[2] = {ACC, LINES};
+
+    Display d(mat, sizeof(modes)/sizeof(Mode), modes);
     //TODO: get pp from osu!api
+    d.addLine(100);
+    d.addLine(200);
     d.addLine(270);
+    d.addLine(500);
+    d.addLine(850);
     d.setData((float*)data, ((int*)data)+3);
     d.Start();
 
