@@ -14,6 +14,7 @@ using namespace rgb_matrix;
 
 const struct Color FC_LINE(200, 200, 200);
 const struct Color LINE_COLOR(200,200,200);
+const struct Color TEXT_COLOR(255,255,255);
 const struct Color CURRENT_PLAY(100,100,0);
 
 const struct Color c300(0, 200, 200);
@@ -30,20 +31,24 @@ const struct Color cMiss(200, 0, 0);
 #define M_5 m_hit_data[2]
 #define M_MISS m_hit_data[3]
 
-enum Mode {LINES, PP_IF_FC, ACC, TOP_PLAYS};
+#define M_TOP_SCALE 0.25
 
 class Display : public ThreadedCanvasManipulator {
     public:
-        Display(RGBMatrix *mat, int num, Mode* m);
+        Display(RGBMatrix *mat);
         void setData(float*, int*);
         void addLine(float);
-        void addMode(Mode);
+        void addMode(std::string);
+        void setTopPlays(float*, int);
         virtual void Run();
-        std::vector<Mode> modes;
+        std::vector<std::string> modes;
     private:
         Font font;
         int id;
         float *m_pp_data;
         int *m_hit_data;
+        float* m_top_plays;
+        int m_plays_count;
         std::set<float> m_pp_lines;
+        void drawNumbers(float num, int x, int y, Color c, bool left, int d = 0);
 };
