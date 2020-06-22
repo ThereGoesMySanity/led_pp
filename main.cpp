@@ -31,10 +31,10 @@ int main(int argc, char **argv)
     std::smatch match;
     while (!file.eof() && std::regex_match(mode, match, regex))
     {
-        printf("Added mode %s\n", match[1]);
+        printf("Added mode %s\n", match[1].str());
         d.addMode(match[1],
-                  {std::stoi(match[2]), std::stoi(match[3]),
-                   std::stoi(match[4]), std::stoi(match[5])},
+                  {std::stoi(match[2].str()), std::stoi(match[3].str()),
+                   std::stoi(match[4].str()), std::stoi(match[5].str())},
                   match[6]);
         file >> mode;
     }
