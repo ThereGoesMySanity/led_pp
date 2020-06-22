@@ -29,7 +29,7 @@ int main(int argc, char **argv)
     std::string mode;
     file >> mode;
     std::smatch match;
-    while (mode.size() > 0 && std::regex_match(mode, match, regex))
+    while (!file.eof() && std::regex_match(mode, match, regex))
     {
         printf("Added mode %s\n", match[1]);
         d.addMode(match[1],
