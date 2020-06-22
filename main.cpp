@@ -29,7 +29,7 @@ int main(int argc, char **argv)
     std::string mode;
     file >> mode;
     std::smatch match;
-    while (std::regex_match(mode, match, regex))
+    while (mode.size() > 0 && std::regex_match(mode, match, regex))
     {
         printf("Added mode %s\n", match[1]);
         d.addMode(match[1],
@@ -38,7 +38,6 @@ int main(int argc, char **argv)
                   match[6]);
         file >> mode;
     }
-
 
     Connection c;
     bool connected = c.connect();
