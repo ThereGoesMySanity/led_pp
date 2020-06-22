@@ -15,14 +15,17 @@ int main(int argc, char **argv)
     runtime_opt.drop_privileges = 0;
     RGBMatrix *mat = CreateMatrixFromFlags(&argc, &argv, &defaults, &runtime_opt);
 
-    Display d(mat);
-
     std::ifstream file;
     file.open("settings.cfg");
     std::string name;
     file >> name;
 
-    std::regex regex("([A-Z_]*)\\((\\d+), (\\d+), (\\d+), (\\d+),? ?(.*?)\\)");
+    API a;
+    std::vector<float> top = a.getUserBest(name, NUM_TOP_PLAYS);
+
+    Display d(mat);
+
+    std::regex regex("([A-Z_]*)\\((\\d+),(\\d+),(\\d+),(\\d+),?(.*?)\\)");
     std::string mode;
     file >> mode;
     std::smatch match;
@@ -36,8 +39,6 @@ int main(int argc, char **argv)
         file >> mode;
     }
 
-    API a;
-    std::vector<float> top = a.getUserBest(name, NUM_TOP_PLAYS);
 
     Connection c;
     bool connected = c.connect();
