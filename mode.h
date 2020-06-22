@@ -12,7 +12,7 @@ class Mode
 public:
     Mode(Display *display, Rectangle area, OsuData *data)
         : display(display), area(area), data(data) {}
-    virtual void Draw();
+    virtual void Draw() = 0;
 
 protected:
     Display *display;

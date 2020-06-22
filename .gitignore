@@ -3,3 +3,6 @@ connection-test
 led_pp
 *.swp
 key.dat
+
+build/*
+.vscode/*

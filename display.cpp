@@ -32,9 +32,9 @@ void Display::DrawLine(int x0, int y0, int x1, int y1, Color c)
 {
     rgb_matrix::DrawLine(canvas(), 63 - y0, 31 - x0, 63 - y1, 31 - x1, c);
 }
-void Display::DrawNumbers(float num, int x, int y, Color c, bool left, int dec = 0) { DrawNumbers(&font, num, x, y, c, left, dec); }
+void Display::DrawNumbers(float num, int x, int y, Color c, bool left, int dec) { DrawNumbers(&font, num, x, y, c, left, dec); }
 
-void Display::DrawNumbers(Font *font, float num, int x, int y, Color c, bool left, int dec = 0)
+void Display::DrawNumbers(Font *font, float num, int x, int y, Color c, bool left, int dec)
 {
     DrawText(font, std::to_string((int)num), x, y, c, left);
 }

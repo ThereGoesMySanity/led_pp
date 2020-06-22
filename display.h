@@ -24,18 +24,6 @@ const struct Color c100(0, 200, 0);
 const struct Color c50(200, 0, 200);
 const struct Color cMiss(200, 0, 0);
 
-typedef struct DataPacket {
-    PPData pp;
-    HitData hit;
-};
-enum PPDataArr { MAX, FC, RT };
-static std::unordered_map<std::string,int> const pdaTable = {{"MAX", 0}, {"FC", 1}, {"RT", 2}};
-
-typedef struct OsuData {
-    PPData* pp;
-    HitData* hit;
-    std::vector<float> topPlays;
-} OsuData;
 typedef struct PPData {
     float maxPP;
     float fcPP;
@@ -48,17 +36,34 @@ typedef struct HitData {
     int misses;
 } HitData;
 
+typedef struct DataPacket {
+    PPData pp;
+    HitData hit;
+} DataPacket;
+
+enum PPDataArr { MAX, FC, RT };
+static std::unordered_map<std::string,int> const pdaTable = {{"MAX", 0}, {"FC", 1}, {"RT", 2}};
+
+typedef struct OsuData {
+    PPData* pp;
+    HitData* hit;
+    std::vector<float> topPlays;
+} OsuData;
+
+struct Rectangle;
+class Mode;
+
 #define M_TOP_SCALE 0.25
 
 class Display : public ThreadedCanvasManipulator {
     public:
         Display(RGBMatrix *mat);
+        ~Display();
         void setData(OsuData);
         void addLine(float);
         void addMode(std::string name, Rectangle area, std::string args);
         void setTopPlays(float*, int);
         virtual void Run();
-        Canvas* Canvas() { return canvas(); };
         std::vector<Mode *> modes;
         void DrawNumbers(Font *font, float num, int x, int y, Color c, bool left, int d = 0);
         void DrawNumbers(float num, int x, int y, Color c, bool left, int d = 0);

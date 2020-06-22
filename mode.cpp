@@ -82,6 +82,7 @@ float FixedWindow::max()
         case TOP_PLAY: return data->topPlays[0];
         case CUSTOM: return customMax;
     }
+    return 0;
 }
 void FixedWindow::Draw()
 {
