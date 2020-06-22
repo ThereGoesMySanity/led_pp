@@ -30,6 +30,11 @@ std::vector<float> API::getUserBest(std::string player, int limit)
     std::string key;
     std::ifstream f;
     f.open("key.dat");
+    if (!f.good())
+    {
+        printf("Cannot find key.dat\n");
+        exit(1);
+    }
     f >> key;
     std::stringstream url;
     url << "https://osu.ppy.sh/api/get_user_best";
