@@ -1,10 +1,13 @@
+#include <regex>
 #include "connection.h"
 #include "display.h"
 #include "api.h"
+#include "mode.h"
 
 #define NUM_TOP_PLAYS 50
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv)
+{
     RGBMatrix::Options defaults;
     defaults.chain_length = 2;
     defaults.led_rgb_sequence = "RBG";
@@ -18,33 +21,35 @@ int main(int argc, char** argv) {
     file.open("settings.cfg");
     std::string name;
     file >> name;
+
+    std::regex regex("([A-Z_]*)\\((\\d+), (\\d+), (\\d+), (\\d+),? ?(.*?)\\)");
     std::string mode;
     file >> mode;
-    while(!file.eof()) {
-        printf("Added mode %s\n", mode.c_str());
-        d.addMode(mode);
+    std::smatch match;
+    while (std::regex_match(mode, match, regex))
+    {
+        printf("Added mode %s\n", match[1]);
+        d.addMode(match[1],
+                  {std::stoi(match[2]), std::stoi(match[3]),
+                   std::stoi(match[4]), std::stoi(match[5])},
+                  match[6]);
         file >> mode;
     }
 
     API a;
-    float *pp = a.getUserBest(name, NUM_TOP_PLAYS);
-    d.setTopPlays(pp, NUM_TOP_PLAYS);
-    d.addLine(100);
-    d.addLine(200);
-    d.addLine(*pp);
-    d.addLine(500);
-    d.addLine(850);
-
+    std::vector<float> top = a.getUserBest(name, NUM_TOP_PLAYS);
 
     Connection c;
     bool connected = c.connect();
-    DataPacket *data = (DataPacket*)c.bufferAddr();
+    DataPacket *data = (DataPacket *)c.bufferAddr();
 
-    d.setData(&data->pp, &data->hit);
+    d.setData({&data->pp, &data->hit, top});
     d.Start();
 
-    while(connected) {
-        while(c.getData()) ;
+    while (connected)
+    {
+        while (c.getData())
+            ;
         data->pp.maxPP = 0;
         connected = c.connect();
     }

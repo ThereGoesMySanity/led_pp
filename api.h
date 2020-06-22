@@ -7,7 +7,7 @@
 class API {
     public:
         API();
-        float* getUserBest(std::string player, int count);
+        std::vector<float> getUserBest(std::string player, int count);
         void pushData(char data);
     private:
         std::string data;

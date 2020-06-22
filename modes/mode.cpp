@@ -1,19 +1,18 @@
 #include "mode.h"
-
 void FixedSizeWindow::Draw()
 {
     int y0, y1;
-    if (ppData->rtPP < scale * (area.height / 2))
+    if (data->pp->rtPP < scale * (area.height / 2))
     {
         y0 = area.y;
         y1 = scale * area.height;
     }
     else
     {
-        y0 = ppData->rtPP - scale * (area.height / 2);
-        y1 = ppData->rtPP + scale * (area.height / 2);
+        y0 = data->pp->rtPP - scale * (area.height / 2);
+        y1 = data->pp->rtPP + scale * (area.height / 2);
     }
-    int line = (ppData->rtPP - y0) / scale;
+    int line = (data->pp->rtPP - y0) / scale;
     for (int i = 0; i < line; i++)
     {
         display->DrawLine(area.x, i, area.x + area.width, i, CURRENT_PLAY);
@@ -41,10 +40,10 @@ void FixedSizeWindow::Draw()
 
 void ScalingWindow::Draw()
 {
-    float scale = ppData->rtPP / (area.height - margin);
+    float scale = data->pp->rtPP / (area.height - margin);
     for (float pp : lines)
     {
-        if (pp > ppData->rtPP)
+        if (pp > data->pp->rtPP)
         {
             scale = pp / (area.height - margin);
             break;
@@ -53,7 +52,7 @@ void ScalingWindow::Draw()
     if (integerScales) scale = (int)scale;
     for (int i = 0; i < area.height; i++)
     {
-        if (scale * i < ppData->rtPP)
+        if (scale * i < data->pp->rtPP)
         {
             display->DrawLine(area.x, i, area.x + area.width, i, CURRENT_PLAY);
         }
@@ -76,11 +75,19 @@ void ScalingWindow::Draw()
     }
 }
 
+float FixedWindow::max()
+{
+    switch (maxType) {
+        case MAX_PP: return data->pp->maxPP;
+        case TOP_PLAY: return data->topPlays[0];
+        case CUSTOM: return customMax;
+    }
+}
 void FixedWindow::Draw()
 {
-    float scale = max / area.height;
-    int fcLine = (int)(ppData->fcPP / scale);
-    int rtLine = (int)(ppData->rtPP / scale);
+    float scale = max() / area.height;
+    int fcLine = (int)(data->pp->fcPP / scale);
+    int rtLine = (int)(data->pp->rtPP / scale);
     display->DrawLine(area.x, fcLine, area.x + area.width, fcLine, FC_LINE);
     for (int i = 0; i < rtLine; i++)
     {
@@ -90,13 +97,13 @@ void FixedWindow::Draw()
 
 void AccMode::Draw()
 {
-    int scale = hitData->hit300 + hitData->hit100 + hitData->hit50 + hitData->misses;
+    int scale = data->hit->hit300 + data->hit->hit100 + data->hit->hit50 + data->hit->misses;
     if (scale == 0)
         return;
     float offset = scale * accOffset;
-    int line300 = (int)((hitData->hit300 - offset) * area.height / (scale - offset));
-    int line100 = (int)((hitData->hit300 + hitData->hit100 - offset) * area.height / (scale - offset));
-    int line50 = (int)((hitData->hit300 + hitData->hit100 + hitData->hit50 - offset) * area.height / (scale - offset));
+    int line300 = (int)((data->hit->hit300 - offset) * area.height / (scale - offset));
+    int line100 = (int)((data->hit->hit300 + data->hit->hit100 - offset) * area.height / (scale - offset));
+    int line50 = (int)((data->hit->hit300 + data->hit->hit100 + data->hit->hit50 - offset) * area.height / (scale - offset));
     Color c = c300;
     for (int i = 0; i < area.height; i++)
     {
@@ -120,11 +127,14 @@ void AccMode::Draw()
     }
     if (scale > 0)
     {
-        float acc = 100.0 * (hitData->hit300 * 6 + hitData->hit100 * 2 + hitData->hit50) / (6 * scale);
+        float acc = 100.0 * (data->hit->hit300 * 6 + data->hit->hit100 * 2 + data->hit->hit50) / (6 * scale);
         display->DrawNumbers(acc, area.x, area.y + 4, TEXT_COLOR, true);
     }
 }
 
 void PPMode::Draw() {
-    display->
+    char buf[6] = {0};
+    sprintf(buf, "%ipp", (int)(((float *)data->pp)[ppType]));
+    std::string ppText(buf);
+    display->DrawText(&font, ppText, area.x, area.y, c, true);
 }

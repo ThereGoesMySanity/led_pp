@@ -1,66 +1,102 @@
+#ifndef _a_MODE_H
+#define _a_MODE_H
 #include "display.h"
 
-typedef struct Rectangle {
+typedef struct Rectangle
+{
     int x, y, width, height;
 } Rectangle;
 
-class Mode {
-    public:
-        Mode(Display* display, Rectangle area, PPData* ppData, HitData* hitData)
-            : display(display), area(area), ppData(ppData), hitData(hitData) { }
-        virtual void Draw();
-    protected:
-        Display* display;
-        Rectangle area;
-        PPData* ppData;
-        HitData* hitData;
+class Mode
+{
+public:
+    Mode(Display *display, Rectangle area, OsuData *data)
+        : display(display), area(area), data(data) {}
+    virtual void Draw();
+
+protected:
+    Display *display;
+    Rectangle area;
+    OsuData *data;
+};
+class AccMode : public Mode
+{
+public:
+    AccMode(Display *display, Rectangle area, OsuData *data, float accOffset)
+        : Mode(display, area, data), accOffset(accOffset) {}
+    void Draw();
+
+private:
+    float accOffset;
 };
 
-class AccMode : public Mode {
-    public: void Draw();
-    private: float accOffset = 0.9;
+class PPMode : public Mode
+{
+public:
+    PPMode(Display *display, Rectangle area, OsuData *data, int ppType, const char *font)
+        : Mode(display, area, data), ppType(ppType) { this->font.LoadFont(font); }
+    void Draw();
+
+private:
+    int ppType;
+    Font font;
+    Color c = Color(200, 200, 200);
 };
 
-class PPMode : public Mode {
-    public:
-        PPMode(Display* display, Rectangle area, PPData* ppData, HitData* hitData, const char* font = "rpi-rgb-led-matrix/fonts/13x6.bdf")
-            : Mode(display, area, ppData, hitData) { this->font.LoadFont(font); }
-        void Draw();
-    private:
-        Font font;
-}
+class LineMode : public Mode
+{
+public:
+    LineMode(Display *display, Rectangle area, OsuData *data, std::vector<float> lines, bool drawBarText = false, bool drawLineText = true)
+        : Mode(display, area, data), lines(lines), drawBarText(drawBarText), drawLineText(drawLineText)
+    {
+        std::sort(lines.begin(), lines.end());
+    }
 
-class LineMode : public Mode {
-    public:
-        LineMode(Display* display, Rectangle area, PPData* ppData, HitData* hitData
-                , std::vector<float> lines, bool drawBarText = false, bool drawLineText = true)
-                : Mode(display, area, ppData, hitData), lines(lines), drawBarText(drawBarText), drawLineText(drawLineText) {}
-    protected:
-        std::vector<float> lines;
-        bool drawBarText, drawLineText;
+protected:
+    std::vector<float> lines;
+    bool drawBarText, drawLineText;
+};
+enum FixedWindowMaxTypes
+{
+    MAX_PP,
+    TOP_PLAY,
+    CUSTOM
+};
+static std::unordered_map<std::string, int> const fwmtTable = {{"MAX_PP", 0}, {"TOP_PLAY", 1}, {"CUSTOM", 2}};
+class FixedWindow : public Mode
+{
+public:
+    FixedWindow(Display *display, Rectangle area, OsuData *data, int maxType, float customMax)
+        : Mode(display, area, data), maxType(maxType), customMax(customMax) {}
+    void Draw();
+
+private:
+    float max();
+    int maxType;
+    float customMax;
 };
 
-class FixedWindow : public Mode {
-    public:
-        FixedWindow(Display* display, Rectangle area, PPData* ppData, HitData* hitData
-            , float max)
-            : Mode(display, area, ppData, hitData), max(max) { }
-        void Draw();
-    private:
-        float max;
+class FixedSizeWindow : public LineMode
+{
+public:
+    FixedSizeWindow(Display *display, Rectangle area, OsuData *data, std::vector<float> lines, bool drawBarText, bool drawLineText, float scale)
+        : LineMode(display, area, data, lines, drawBarText, drawLineText), scale(scale) {}
+    void Draw();
+
+private:
+    float scale;
 };
 
-class FixedSizeWindow : public LineMode {
-    public:
-        void Draw();
-    private:
-        float scale = 0.25f;
-};
+class ScalingWindow : public LineMode
+{
+    ScalingWindow(Display *display, Rectangle area, OsuData *data, std::vector<float> lines, bool drawBarText, bool drawLineText, int margin, bool integerScales)
+        : LineMode(display, area, data, lines, drawBarText, drawLineText), margin(margin), integerScales(integerScales) {}
 
-class ScalingWindow : public LineMode {
-    public:
-        void Draw();
-    private:
-        float margin = 4;
-        bool integerScales = false;
+public:
+    void Draw();
+
+private:
+    float margin;
+    bool integerScales;
 };
+#endif
