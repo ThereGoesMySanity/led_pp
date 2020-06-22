@@ -1,26 +1,30 @@
 #include "display.h"
 
-Display::Display(RGBMatrix *mat) : ThreadedCanvasManipulator(mat) {
+Display::Display(RGBMatrix *mat) : ThreadedCanvasManipulator(mat)
+{
     font.LoadFont("rpi-rgb-led-matrix/fonts/6x4.bdf");
 }
-void Display::Run() {
-    while(running()) {
-        canvas()->Fill(0,0,0);
-        if(*((char*)m_pp_data) != 0) {
+void Display::Run()
+{
+    while (running())
+    {
+        canvas()->Fill(0, 0, 0);
+        if (m_pp_data->maxPP != 0)
+        {
             int numModes = modes.size();
-            for(int m = 0; m < numModes; m++) {
-                int y1 = 32 * (numModes - m) / numModes - 1;
-                int y2 = 32 * (numModes - m - 1) / numModes;
+            for (int m = 0; m < numModes; m++)
+            {
+                /*
                 if(modes[m] == "LINES") {
-                    int scale = ceil(M_RT_PP/64);
+                    int scale = floor(m_pp_data->rtPP/64) + 1;
                     for(float pp : m_pp_lines) {
-                        if(pp > M_RT_PP) {
-                            scale = ceil(pp/64);
+                        if(pp > m_pp_data->rtPP) {
+                            scale = floor(pp/64) + 1;
                             break;
                         }
                     }
                     for(int x = 0; x < 64; x++) {
-                        if(scale*x < M_RT_PP) {
+                        if(scale*x < m_pp_data->rtPP) {
                             DrawLine(canvas(), 64-x, y1, 64-x, y2, CURRENT_PLAY);
                         }
                     }
@@ -39,25 +43,25 @@ void Display::Run() {
                         }
                         if(hi < 64 && text) {
                             if(hi + 6 > 64) {
-                                drawNumbers(*pp, 66-hi, y2, LINE_COLOR, false);
+                                DrawNumbers(*pp, 66-hi, y2, LINE_COLOR, false);
                             } else {
-                                drawNumbers(*pp, 58-hi, y2, LINE_COLOR, false);
+                                DrawNumbers(*pp, 58-hi, y2, LINE_COLOR, false);
                             }
                         }
                     }
                 } else if(modes[m] == "PP_IF_FC") {
-                    float scale = M_MAX_PP/64;
-                    int fcLine = (int)(M_FC_PP/scale);
-                    int rtLine = (int)(M_RT_PP/scale);
+                    float scale = m_pp_data->maxPP/64;
+                    int fcLine = (int)(m_pp_data->fcPP/scale);
+                    int rtLine = (int)(m_pp_data->rtPP/scale);
                     DrawLine(canvas(), 64-fcLine, y1, 64-fcLine, y2, FC_LINE);
                     for(int i = 0; i < rtLine; i++){
                         DrawLine(canvas(), 64-i, y1, 64-i, y2, CURRENT_PLAY);
                     }
                 } else if(modes[m] == "ACC") {
-                    int scale = M_3+M_1+M_5+M_MISS;
-                    int line300 = (int)(M_3*64.0/scale);
-                    int line100 = (int)((M_3+M_1)*64.0/scale);
-                    int line50 = (int)((M_3+M_1+M_5)*64.0/scale);
+                    int scale = m_hit_data->hit300+m_hit_data->hit100+m_hit_data->hit50+m_hit_data->misses;
+                    int line300 = (int)(m_hit_data->hit300*64.0/scale);
+                    int line100 = (int)((m_hit_data->hit300+m_hit_data->hit100)*64.0/scale);
+                    int line50 = (int)((m_hit_data->hit300+m_hit_data->hit100+m_hit_data->hit50)*64.0/scale);
                     Color c = c300;
                     for(int i = 0; i < 64; i++) {
                         if(i < line300) {
@@ -72,20 +76,20 @@ void Display::Run() {
                         DrawLine(canvas(), 63-i, y1, 63-i, y2, c);
                     }
                     if(scale > 0) {
-                        float acc = 100.0*(M_3*6+M_1*2+M_5)/(6*scale);
-                        int dec = M_3==scale? 0 : 1;
-                        drawNumbers(acc, 58, y1, TEXT_COLOR, true, dec);
+                        float acc = 100.0*(m_hit_data->hit300*6+m_hit_data->hit100*2+m_hit_data->hit50)/(6*scale);
+                        int dec = m_hit_data->hit300==scale? 0 : 1;
+                        DrawNumbers(acc, 58, y1, TEXT_COLOR, true, dec);
                     }
                 } else if(modes[m] == "TOP_PLAYS") {
                     float x1, x2;
-                    if(M_RT_PP < M_TOP_SCALE*32) {
+                    if(m_pp_data->rtPP < M_TOP_SCALE*32) {
                         x1 = 0;
                         x2 = M_TOP_SCALE * 64;
                     } else {
-                        x1 = M_RT_PP-M_TOP_SCALE*32;
-                        x2 = M_RT_PP+M_TOP_SCALE*32;
+                        x1 = m_pp_data->rtPP-M_TOP_SCALE*32;
+                        x2 = m_pp_data->rtPP+M_TOP_SCALE*32;
                     }
-                    int line = (M_RT_PP-x1)/M_TOP_SCALE;
+                    int line = (m_pp_data->rtPP-x1)/M_TOP_SCALE;
                     for(int i = 0; i < line; i++) {
                         DrawLine(canvas(), 63-i, y1, 63-i, y2, CURRENT_PLAY);
                     }
@@ -96,57 +100,59 @@ void Display::Run() {
                             if(xval + 7 <= 64) {
                                 if(i > 0) { 
                                     if(xval + 7 < (m_top_plays[i-1]-x1)/M_TOP_SCALE) {
-                                        drawNumbers(m_top_plays[i], 58-xval, y2, LINE_COLOR, false);
+                                        DrawNumbers(m_top_plays[i], 58-xval, y2, LINE_COLOR, false);
                                     } else if (i < m_plays_count - 1) {
                                         if(xval - 13 > (m_top_plays[i+1]-x1)/M_TOP_SCALE) {
-                                            drawNumbers(m_top_plays[i], 66-xval, y2, LINE_COLOR, false);
+                                            DrawNumbers(m_top_plays[i], 66-xval, y2, LINE_COLOR, false);
                                         }
                                     } else {
-                                        drawNumbers(m_top_plays[i], 66-xval, y2, LINE_COLOR, false);
+                                        DrawNumbers(m_top_plays[i], 66-xval, y2, LINE_COLOR, false);
                                     }
                                 } else {
-                                    drawNumbers(m_top_plays[i], 58-xval, y2, LINE_COLOR, false);
+                                    DrawNumbers(m_top_plays[i], 58-xval, y2, LINE_COLOR, false);
                                 }
                             }
                         }
                     }
                 }
+                */
             }
         }
         usleep(10000);
     }
 }
-void Display::drawNumbers(float num, int x, int y, Color c, bool left, int dec) {
+void Display::DrawLine(int x0, int y0, int x1, int y1, Color c)
+{
+    rgb_matrix::DrawLine(canvas(), 63 - y0, 31 - x0, 63 - y1, 31 - x1, c);
+}
+void Display::DrawNumbers(float num, int x, int y, Color c, bool left, int dec) { DrawNumbers(font, x, y, c, left, dec); }
+
+void Display::DrawNumbers(Font *font, float num, int x, int y, Color c, bool left, int dec)
+{
     std::string text = std::to_string((int)num);
     std::reverse(text.begin(), text.end());
-    int ypos;
-    if(left) {
-        ypos = y+4-text.size()*4;
-    } else {
-        ypos = y+4;
+    int xpos = x - font.height();
+    if (left)
+    {
+        xpos += font.height() * text.size();
     }
-    VerticalDrawText(canvas(), font, x, ypos, c, NULL, text.c_str());
-    if(dec > 0) {
-        int num2 = (num-(int)num)*pow(10, dec);
-        char str[dec+1];
-        sprintf(str, "%0*d", dec, num2);
-        std::string text2 = std::string(str);
-        std::reverse(text.begin(), text.end());
-        VerticalDrawText(canvas(), font, x, ypos-text2.size()*4-2, c, NULL, text2.c_str());
-        canvas()->SetPixel(x+4, ypos-5, c.r, c.g, c.b);
-    }
+    VerticalDrawText(canvas(), font, 63 - y, 31 - xpos, c, NULL, text.c_str());
 }
-void Display::addLine(float line){
+void Display::addLine(float line)
+{
     m_pp_lines.insert(line);
 }
-void Display::setData(float* pp, int* hit) {
+void Display::setData(PPData *pp, HitData *hit)
+{
     m_pp_data = pp;
     m_hit_data = hit;
 }
-void Display::addMode(std::string m) {
+void Display::addMode(std::string m)
+{
     modes.push_back(m);
 }
-void Display::setTopPlays(float* f, int count) {
+void Display::setTopPlays(float *f, int count)
+{
     m_top_plays = f;
     m_plays_count = count;
 }

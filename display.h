@@ -22,33 +22,44 @@ const struct Color c100(0, 200, 0);
 const struct Color c50(200, 0, 200);
 const struct Color cMiss(200, 0, 0);
 
-#define M_MAX_PP m_pp_data[0]
-#define M_FC_PP m_pp_data[1]
-#define M_RT_PP m_pp_data[2]
+typedef struct DataPacket {
+    PPData pp;
+    HitData hit;
+};
 
-#define M_3 m_hit_data[0]
-#define M_1 m_hit_data[1]
-#define M_5 m_hit_data[2]
-#define M_MISS m_hit_data[3]
+typedef struct PPData {
+    float maxPP;
+    float fcPP;
+    float rtPP;
+} PPData;
+typedef struct HitData {
+    int hit300;
+    int hit100;
+    int hit50;
+    int misses;
+} HitData;
 
 #define M_TOP_SCALE 0.25
 
 class Display : public ThreadedCanvasManipulator {
     public:
         Display(RGBMatrix *mat);
-        void setData(float*, int*);
+        void setData(PPData*, HitData*);
         void addLine(float);
         void addMode(std::string);
         void setTopPlays(float*, int);
         virtual void Run();
+        Canvas* Canvas() { return canvas(); };
         std::vector<std::string> modes;
+        void DrawNumbers(float num, int x, int y, Color c, bool left, int d = 0);
+        void DrawLine(int x0, int y0, int x1, int y1, Color c);
+        int FontHeight() { return font.CharacterWidth('0'); }
     private:
         Font font;
         int id;
-        float *m_pp_data;
-        int *m_hit_data;
+        PPData *m_pp_data;
+        HitData *m_hit_data;
         float* m_top_plays;
         int m_plays_count;
         std::set<float> m_pp_lines;
-        void drawNumbers(float num, int x, int y, Color c, bool left, int d = 0);
 };

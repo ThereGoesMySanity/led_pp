@@ -38,14 +38,14 @@ int main(int argc, char** argv) {
 
     Connection c;
     bool connected = c.connect();
-    void *data = c.bufferAddr();
+    DataPacket *data = (DataPacket*)c.bufferAddr();
 
-    d.setData((float*)data, (int*)data + 3);
+    d.setData(&data->pp, &data->hit);
     d.Start();
 
     while(connected) {
         while(c.getData()) ;
-        ((float*)data)[0] = 0;
+        data->pp.maxPP = 0;
         connected = c.connect();
     }
     delete mat;
