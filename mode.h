@@ -24,7 +24,7 @@ class AccMode : public Mode
 public:
 	AccMode(Display* display, Rectangle area, OsuData* data, float accOffset)
 		: Mode(display, area, data), accOffset(accOffset) {}
-	void Draw();
+	virtual void Draw();
 
 private:
 	float accOffset;
