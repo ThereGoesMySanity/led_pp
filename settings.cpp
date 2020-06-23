@@ -1,4 +1,5 @@
 #include <fstream>
+#include <iostream>
 #include "settings.h"
 #include "interrupt.h"
 #include "mode.h"
@@ -40,7 +41,7 @@ void Settings::parse()
     file >> mode;
     while (!file.eof())
     {
-        if (std::regex_match(mode, match, regex))
+        if (std::regex_match(mode, match, modeRegex))
         {
 			modes.push_back(mode);
         }
@@ -56,7 +57,7 @@ void Settings::loadModes()
 	d->clearModes();
 	for (std::string modeStr : modes)
 	{
-		std::regex_match(modeStr, match, regex);
+		std::regex_match(modeStr, match, modeRegex);
 		printf("Added mode %s\n", match[1].str().c_str());
 		Mode* mode = Mode::CreateMode(d, match[1],
 			{ std::stoi(match[2].str()), std::stoi(match[3].str()),

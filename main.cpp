@@ -27,7 +27,7 @@ int main(int argc, char **argv)
     
     Display d(mat);
 
-    Settings settings("settings.cfg", d);
+    Settings settings("settings.cfg", &d);
 
     API a;
     std::vector<float> top = a.getUserBest(settings.getName(), NUM_TOP_PLAYS);
