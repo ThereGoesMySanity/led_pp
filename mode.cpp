@@ -137,5 +137,5 @@ void PPMode::Draw() {
     char buf[6] = {0};
     sprintf(buf, "%ipp", (int)(((float *)data->pp)[ppType]));
     std::string ppText(buf);
-    display->DrawText(&font, ppText, area.x, area.y, c, true);
+    display->DrawText(&font, ppText, area.x, area.y + area.height, c, true);
 }
