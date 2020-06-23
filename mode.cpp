@@ -54,7 +54,7 @@ void ScalingWindow::Draw()
     {
         if (scale * i < data->pp->rtPP)
         {
-            display->DrawLine(area.x, i, area.x + area.width, i, CURRENT_PLAY);
+            display->DrawLine(area.x, area.y + i, area.x + area.width, area.y + i, CURRENT_PLAY);
         }
     }
     for (int i = 0; i < lines.size(); i++)
@@ -65,11 +65,11 @@ void ScalingWindow::Draw()
         {
             if (i == 0 || (yval + display->FontHeight() + 2 < lines[i - 1] / scale))
             {
-                display->DrawNumbers(lines[i], area.x + area.width - 4, yval + 2, LINE_COLOR, false);
+                display->DrawNumbers(lines[i], area.x + area.width - 4, area.y + yval + 2, LINE_COLOR, false);
             }
             else if (i == lines.size() - 1 || (yval - display->FontHeight() - 2 > lines[i + 1] / scale))
             {
-                display->DrawNumbers(lines[i], area.x + area.width - 4, yval - 2 - display->FontHeight(), LINE_COLOR, false);
+                display->DrawNumbers(lines[i], area.x + area.width - 4, area.y + yval - 2 - display->FontHeight(), LINE_COLOR, false);
             }
         }
     }
@@ -92,7 +92,7 @@ void FixedWindow::Draw()
     display->DrawLine(area.x, fcLine, area.x + area.width, fcLine, FC_LINE);
     for (int i = 0; i < rtLine; i++)
     {
-        display->DrawLine(area.x, i, area.x + area.width, i, CURRENT_PLAY);
+        display->DrawLine(area.x, area.y + i, area.x + area.width, area.y + i, CURRENT_PLAY);
     }
 }
 
