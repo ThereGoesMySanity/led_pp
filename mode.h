@@ -82,12 +82,13 @@ private:
 class FixedSizeWindow : public LineMode
 {
 public:
-	FixedSizeWindow(Display* display, Rectangle area, OsuData* data, std::vector<float> lines, float scale, bool drawBarText, bool drawLineText)
-		: LineMode(display, area, data, lines, drawBarText, drawLineText), scale(scale) {}
+	FixedSizeWindow(Display* display, Rectangle area, OsuData* data, std::vector<float> lines, float scale, bool locked, bool drawBarText, bool drawLineText)
+		: LineMode(display, area, data, lines, drawBarText, drawLineText), scale(scale), locked(locked) {}
 	virtual void Draw();
 
 private:
 	float scale;
+	bool locked;
 };
 
 class ScalingWindow : public LineMode

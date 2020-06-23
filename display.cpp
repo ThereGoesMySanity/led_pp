@@ -101,10 +101,15 @@ void Display::addMode(std::string name, Rectangle r, std::string args)
     }
     else if (name.compare("FIXED_SIZE_BAR") == 0)
     {
-        float scale = 0.25f;
+        float scale = 4f;
         if (std::getline(ss, arg, ','))
         {
             scale = std::stof(arg);
+        }
+        bool locked = false;
+        if (std::getline(ss, arg, ','))
+        {
+            locked = arg.compare("true") == 0;
         }
         bool drawBarText = false;
         if (std::getline(ss, arg, ','))
@@ -116,7 +121,7 @@ void Display::addMode(std::string name, Rectangle r, std::string args)
         {
             drawLineText = arg.compare("true") == 0;
         }
-        mode = new FixedSizeWindow(this, r, &data, data.topPlays, scale, drawBarText, drawLineText);
+        mode = new FixedSizeWindow(this, r, &data, data.topPlays, scale, locked, drawBarText, drawLineText);
     }
     else if (name.compare("SCALING_BAR") == 0)
     {

@@ -4,8 +4,13 @@ void FixedSizeWindow::Draw()
     int y0, y1;
     if (data->pp->rtPP < scale * (area.height / 2))
     {
-        y0 = area.y;
+        y0 = 0;
         y1 = scale * area.height;
+    }
+    else if (locked)
+    {
+        y0 = floor(data->pp->rtPP / (scale * area.height)) * (scale * area.height);
+        y0 = floor(data->pp->rtPP / (scale * area.height) + 1) * (scale * area.height);
     }
     else
     {
@@ -15,23 +20,23 @@ void FixedSizeWindow::Draw()
     int line = (data->pp->rtPP - y0) / scale;
     for (int i = 0; i < line; i++)
     {
-        display->DrawLine(area.x, i, area.x + area.width - 1, i, CURRENT_PLAY);
+        display->DrawLine(area.x, area.y + i, area.x + area.width - 1, area.y + i, CURRENT_PLAY);
     }
     for (int i = 0; i < lines.size(); i++)
     {
         int yval = (lines[i] - y0) / scale;
-        if (yval >= area.y && yval < area.height)
+        if (yval < area.height)
         {
-            display->DrawLine(area.x, yval, area.x + area.width, yval, LINE_COLOR);
+            display->DrawLine(area.x, area.y + yval, area.x + area.width, area.y + yval, LINE_COLOR);
             if (drawLineText)
             {
                 if (i == 0 || (yval + display->FontHeight() + 2 < (lines[i - 1] - y0) / scale))
                 {
-                    display->DrawNumbers(lines[i], area.x + area.width - 4, yval + 2, LINE_COLOR, false);
+                    display->DrawNumbers(lines[i], area.x + area.width - 4, area.y + yval + 2 + display->FontHeight(), LINE_COLOR, false);
                 }
                 else if (i == lines.size() - 1 || (yval - display->FontHeight() - 2 > (lines[i + 1] - y0) / scale))
                 {
-                    display->DrawNumbers(lines[i], area.x + area.width - 4, yval - 2 - display->FontHeight(), LINE_COLOR, false);
+                    display->DrawNumbers(lines[i], area.x + area.width - 4, area.y + yval - 2, LINE_COLOR, false);
                 }
             }
         }
@@ -65,11 +70,11 @@ void ScalingWindow::Draw()
         {
             if (i == 0 || (yval + display->FontHeight() + 2 < lines[i - 1] / scale))
             {
-                display->DrawNumbers(lines[i], area.x + area.width - 4, area.y + yval + 2, LINE_COLOR, false);
+                display->DrawNumbers(lines[i], area.x + area.width - 4, area.y + yval + display->FontHeight() + 2, LINE_COLOR, false);
             }
             else if (i == lines.size() - 1 || (yval - display->FontHeight() - 2 > lines[i + 1] / scale))
             {
-                display->DrawNumbers(lines[i], area.x + area.width - 4, area.y + yval - 2 - display->FontHeight(), LINE_COLOR, false);
+                display->DrawNumbers(lines[i], area.x + area.width - 4, area.y + yval - 2, LINE_COLOR, false);
             }
         }
     }
