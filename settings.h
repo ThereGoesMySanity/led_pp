@@ -20,7 +20,7 @@ private:
 	std::vector<std::string> modes;
 	Display* d;
 	std::regex modeRegex;
-	void read();
+	void readLoop();
 	void parse();
 };
 

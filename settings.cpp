@@ -1,9 +1,10 @@
 #include <fstream>
 #include <iostream>
+#include <unistd.h>
 #include "settings.h"
 #include "interrupt.h"
 #include "mode.h"
-Settings::Settings(std::string file, Display* display) : display(display), file(file), readThread(&Settings::read, this), modeRegex("([A-Z_]*)\\((\\d+),(\\d+),(\\d+),(\\d+),?(.*?)\\)");
+Settings::Settings(std::string file, Display* display) : d(display), file(file), readThread(&Settings::readLoop, this), modeRegex("([A-Z_]*)\\((\\d+),(\\d+),(\\d+),(\\d+),?(.*?)\\)")
 {
 	eventQueue = inotify_init();
 	watch = inotify_add_watch(eventQueue, file.c_str(), IN_MODIFY);
@@ -15,7 +16,7 @@ Settings::~Settings()
 	inotify_rm_watch(eventQueue, watch);
 	close(eventQueue);
 }
-void Settings::read()
+void Settings::readLoop()
 {
 	while (!interruptReceived)
 	{
