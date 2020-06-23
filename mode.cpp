@@ -15,7 +15,7 @@ void FixedSizeWindow::Draw()
     int line = (data->pp->rtPP - y0) / scale;
     for (int i = 0; i < line; i++)
     {
-        display->DrawLine(area.x, i, area.x + area.width, i, CURRENT_PLAY);
+        display->DrawLine(area.x, i, area.x + area.width - 1, i, CURRENT_PLAY);
     }
     for (int i = 0; i < lines.size(); i++)
     {
@@ -54,7 +54,7 @@ void ScalingWindow::Draw()
     {
         if (scale * i < data->pp->rtPP)
         {
-            display->DrawLine(area.x, area.y + i, area.x + area.width, area.y + i, CURRENT_PLAY);
+            display->DrawLine(area.x, area.y + i, area.x + area.width - 1, area.y + i, CURRENT_PLAY);
         }
     }
     for (int i = 0; i < lines.size(); i++)
@@ -89,10 +89,10 @@ void FixedWindow::Draw()
     float scale = max() / area.height;
     int fcLine = (int)(data->pp->fcPP / scale);
     int rtLine = (int)(data->pp->rtPP / scale);
-    display->DrawLine(area.x, fcLine, area.x + area.width, fcLine, FC_LINE);
+    display->DrawLine(area.x, fcLine, area.x + area.width - 1, fcLine, FC_LINE);
     for (int i = 0; i < rtLine; i++)
     {
-        display->DrawLine(area.x, area.y + i, area.x + area.width, area.y + i, CURRENT_PLAY);
+        display->DrawLine(area.x, area.y + i, area.x + area.width - 1, area.y + i, CURRENT_PLAY);
     }
 }
 
@@ -124,7 +124,7 @@ void AccMode::Draw()
         {
             c = cMiss;
         }
-        display->DrawLine(area.x, area.y + i, area.x + area.width, area.y + i, c);
+        display->DrawLine(area.x, area.y + i, area.x + area.width - 1, area.y + i, c);
     }
     if (scale > 0)
     {
@@ -137,5 +137,5 @@ void PPMode::Draw() {
     char buf[6] = {0};
     sprintf(buf, "%ipp", (int)(((float *)data->pp)[ppType]));
     std::string ppText(buf);
-    display->DrawText(&font, ppText, area.x, area.y + area.height, c, true);
+    display->DrawText(&font, ppText, area.x, area.y + area.height - 2, c, true);
 }
