@@ -1,3 +1,4 @@
+#include <sys/select.h>
 #include "connection.h"
 Connection::Connection() {
     int opt = 1;
@@ -24,8 +25,17 @@ Connection::Connection() {
         return;
     }
 }
+
 bool Connection::connect() {
     int addrlen = sizeof(address);
+    fd_set set;
+    FD_ZERO(&set);
+    FD_SET(server_fd, &set);
+    if ((select(server_fd + 1, set, NULL, NULL, NULL)) < 0)
+    {
+        printf("select error");
+        return false;
+    }
     if((sock = accept(server_fd, (struct sockaddr*)&address,
                     (socklen_t*)&addrlen)) < 0) {
         printf("accept error\n");
