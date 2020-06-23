@@ -1,4 +1,5 @@
 #include "mode.h"
+#include <sstream>
 static Mode* Mode::CreateMode(Display* d, std::string name, Rectangle r, std::string args)
 {
     std::stringstream ss(args);

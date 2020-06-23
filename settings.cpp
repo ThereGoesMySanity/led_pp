@@ -38,14 +38,14 @@ void Settings::parse()
     fs >> name;
 
     std::string mode;
-    file >> mode;
+    fs >> mode;
     while (!file.eof())
     {
         if (std::regex_match(mode, match, modeRegex))
         {
 			modes.push_back(mode);
         }
-        file >> mode;
+        fs >> mode;
     }
 	fs.close();
 }

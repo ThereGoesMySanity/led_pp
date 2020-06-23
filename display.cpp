@@ -7,12 +7,10 @@
 Display::Display(RGBMatrix *mat) : ThreadedCanvasManipulator(mat)
 {
     font.LoadFont("rpi-rgb-led-matrix/fonts/6x4-4.bdf");
-    pthread_mutex_init(&modeLock, NULL);
 }
 Display::~Display()
 {
     clearModes();
-    pthread_mutex_destroy(&modeLock);
 }
 void Display::Run()
 {
