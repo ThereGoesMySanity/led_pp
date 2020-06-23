@@ -33,7 +33,7 @@ bool Connection::connect() {
     FD_SET(server_fd, &set);
     if ((select(server_fd + 1, set, NULL, NULL, NULL)) < 0)
     {
-        printf("select error");
+        printf("select error\n");
         return false;
     }
     if((sock = accept(server_fd, (struct sockaddr*)&address,
