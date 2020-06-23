@@ -4,11 +4,12 @@
 #include "settings.h"
 #include "mode.h"
 extern bool interruptReceived;
-Settings::Settings(std::string file, Display* display) : d(display), file(file), readThread(&Settings::readLoop, this), modeRegex("([A-Z_]*)\\((\\d+),(\\d+),(\\d+),(\\d+),?(.*?)\\)")
+Settings::Settings(std::string file, Display* display) : d(display), file(file), modeRegex("([A-Z_]*)\\((\\d+),(\\d+),(\\d+),(\\d+),?(.*?)\\)")
 {
 	eventQueue = inotify_init();
 	watch = inotify_add_watch(eventQueue, file.c_str(), IN_MODIFY);
 	parse();
+	readThread = std::thread(&Settings::readLoop, this);
 }
 
 Settings::~Settings()
@@ -53,6 +54,7 @@ void Settings::parse()
 
 void Settings::loadModes()
 {
+	if (d->data.pp == nullptr) return;
     std::smatch match;
 	d->modeLock.lock();
 	d->clearModes();
