@@ -48,6 +48,7 @@ int main(int argc, char **argv)
 		while (!interruptReceived && connected)
 		{
 			while (!interruptReceived && c.getData());
+            if (interruptReceived) break;
 			data->pp.maxPP = 0;
 			connected = c.connect();
 		}
