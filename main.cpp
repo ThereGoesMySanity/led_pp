@@ -25,12 +25,12 @@ int main(int argc, char **argv)
     runtime_opt.drop_privileges = 0;
     RGBMatrix *mat = CreateMatrixFromFlags(&argc, &argv, &defaults, &runtime_opt);
     
-    Settings settings("settings.cfg");
+    Display d(mat);
+
+    Settings settings("settings.cfg", d);
 
     API a;
     std::vector<float> top = a.getUserBest(settings.getName(), NUM_TOP_PLAYS);
-
-    Display d(mat);
 
     Connection c;
     bool connected = c.connect();
