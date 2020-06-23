@@ -51,6 +51,7 @@ int main(int argc, char **argv)
 			connected = c.connect();
 		}
     }
+    d.Stop();
     mat->Clear();
     delete mat;
 }

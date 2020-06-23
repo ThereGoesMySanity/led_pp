@@ -56,7 +56,7 @@ void Settings::loadModes()
 {
 	if (d->data.pp == nullptr) return;
     std::smatch match;
-	d->modeLock.lock();
+	std::lock_guard<std::mutex> lock(d->modeLock);
 	d->clearModes();
 	for (std::string modeStr : modes)
 	{
@@ -68,5 +68,4 @@ void Settings::loadModes()
 			match[6]);
 		d->addMode(mode);
 	}
-	d->modeLock.unlock();
 }

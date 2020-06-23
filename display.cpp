@@ -19,13 +19,12 @@ void Display::Run()
         canvas()->Fill(0, 0, 0);
         if (data.pp->maxPP != 0)
         {
-            modeLock.lock();
+            const std::lock_guard<std::mutex> lock(modeLock);
             int numModes = modes.size();
             for (int m = 0; m < numModes; m++)
             {
                 modes[m]->Draw();
             }
-            modeLock.unlock();
         }
         usleep(10000);
     }
