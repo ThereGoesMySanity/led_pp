@@ -145,7 +145,6 @@ void Display::addMode(std::string name, Rectangle r, std::string args)
     if (mode != nullptr)
     {
         modes.push_back(mode);
-        delete mode;
     }
 }
 void Display::setTopPlays(float *f, int count)
