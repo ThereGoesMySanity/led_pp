@@ -73,7 +73,7 @@ void Display::addMode(std::string name, Rectangle r, std::string args)
     }
     else if (name.compare("PP_TEXT") == 0)
     {
-        int type = 0;
+        int type = RT;
         if (std::getline(ss, arg, ','))
         {
             type = pdaTable.at(arg);
