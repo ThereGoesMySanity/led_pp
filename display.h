@@ -73,11 +73,11 @@ class Display : public ThreadedCanvasManipulator {
         void DrawText(Font *font, std::string text, int x, int y, Color c, bool left);
         void DrawLine(int x0, int y0, int x1, int y1, Color c);
         int FontHeight() { return font.CharacterWidth('0'); }
+        OsuData data;
     private:
         std::vector<Mode *> modes;
         Font font;
         int id;
-        OsuData data;
         float* m_top_plays;
         int m_plays_count;
         std::set<float> m_pp_lines;

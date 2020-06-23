@@ -13,7 +13,7 @@ public:
 	Mode(Display* display, Rectangle area, OsuData* data)
 		: display(display), area(area), data(data) {}
 	virtual void Draw() {}
-	static Mode* CreateMode(std::string name, Rectangle area, std::string options);
+	static Mode* CreateMode(Display* display, std::string name, Rectangle area, std::string options);
 protected:
 	Display* display;
 	Rectangle area;

@@ -1,5 +1,5 @@
 #include "mode.h"
-static Mode* Mode::CreateMode(std::string name, Rectangle r, std::string args)
+static Mode* Mode::CreateMode(Display* d, std::string name, Rectangle r, std::string args)
 {
     std::stringstream ss(args);
     std::string arg;
@@ -11,7 +11,7 @@ static Mode* Mode::CreateMode(std::string name, Rectangle r, std::string args)
         {
             accOffset = std::stof(arg);
         }
-        mode = new AccMode(this, r, &data, accOffset);
+        mode = new AccMode(d, r, &d->data, accOffset);
     }
     else if (name.compare("PP_TEXT") == 0)
     {
@@ -25,7 +25,7 @@ static Mode* Mode::CreateMode(std::string name, Rectangle r, std::string args)
         {
             font = arg;
         }
-        mode = new PPMode(this, r, &data, type, font.c_str());
+        mode = new PPMode(d, r, &d->data, type, font.c_str());
     }
     else if (name.compare("FIXED_WIN_BAR") == 0)
     {
@@ -39,7 +39,7 @@ static Mode* Mode::CreateMode(std::string name, Rectangle r, std::string args)
         {
             customMax = std::stof(arg);
         }
-        mode = new FixedWindow(this, r, &data, maxType, customMax);
+        mode = new FixedWindow(d, r, &d->data, maxType, customMax);
     }
     else if (name.compare("FIXED_SIZE_BAR") == 0)
     {
@@ -63,7 +63,7 @@ static Mode* Mode::CreateMode(std::string name, Rectangle r, std::string args)
         {
             drawLineText = arg.compare("true") == 0;
         }
-        mode = new FixedSizeWindow(this, r, &data, data.topPlays, scale, locked, drawBarText, drawLineText);
+        mode = new FixedSizeWindow(d, r, &d->data, d->data.topPlays, scale, locked, drawBarText, drawLineText);
     }
     else if (name.compare("SCALING_BAR") == 0)
     {
@@ -87,7 +87,7 @@ static Mode* Mode::CreateMode(std::string name, Rectangle r, std::string args)
         {
             drawLineText = arg.compare("true") == 0;
         }
-        mode = new ScalingWindow(this, r, &data, data.topPlays, margin, integerScales, drawBarText, drawLineText);
+        mode = new ScalingWindow(d, r, &d->data, d->data.topPlays, margin, integerScales, drawBarText, drawLineText);
     }
     return mode;
 }

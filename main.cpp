@@ -1,4 +1,3 @@
-#include <regex>
 #include <signal.h>
 #include "connection.h"
 #include "display.h"

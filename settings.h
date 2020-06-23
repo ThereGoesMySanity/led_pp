@@ -1,7 +1,8 @@
 #ifndef __SETTINGS_H
 #define __SETTINGS_H
-#include "display.h"
 #include <thread>
+#include <regex>
+#include "display.h"
 class Settings
 {
 public:
