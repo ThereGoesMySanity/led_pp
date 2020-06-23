@@ -101,7 +101,7 @@ void Display::addMode(std::string name, Rectangle r, std::string args)
     }
     else if (name.compare("FIXED_SIZE_BAR") == 0)
     {
-        float scale = 4f;
+        float scale = 4;
         if (std::getline(ss, arg, ','))
         {
             scale = std::stof(arg);
