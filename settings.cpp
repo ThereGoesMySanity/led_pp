@@ -35,8 +35,7 @@ void Settings::parse()
 {
     std::ifstream fs;
     fs.open(file);
-    std::string name;
-    fs >> name;
+	fs >> username;
 
     std::string mode;
     fs >> mode;
