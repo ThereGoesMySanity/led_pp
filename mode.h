@@ -53,6 +53,7 @@ public:
 	{
 		std::sort(lines.begin(), lines.end());
 	}
+	virtual void Draw() = 0;
 
 protected:
 	std::vector<float> lines;
