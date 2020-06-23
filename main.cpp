@@ -29,9 +29,9 @@ int main(int argc, char **argv)
     std::string mode;
     file >> mode;
     std::smatch match;
-    while (!file.eof() && std::regex_match(mode, match, regex))
+    while (!file.eof())
     {
-        if (mode.size() > 0 && mode[0] != '#')
+        if (std::regex_match(mode, match, regex))
         {
 			printf("Added mode %s\n", match[1].str().c_str());
 			d.addMode(match[1],
