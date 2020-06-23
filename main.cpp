@@ -15,7 +15,8 @@ static void interruptHandler(int signo)
 bool running;
 int main(int argc, char **argv)
 {
-    struct sigaction int_handler = { .sa_handler = interruptHandler };
+    struct sigaction int_handler;
+    int_handler.sa_handler = interruptHandler;
     sigaction(SIGTERM, &int_handler, 0);
     sigaction(SIGINT, &int_handler, 0);
 
