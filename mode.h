@@ -12,7 +12,7 @@ class Mode
 public:
 	Mode(Display* display, Rectangle area, OsuData* data)
 		: display(display), area(area), data(data) {}
-	virtual void Draw() = 0;
+	virtual void Draw() {}
 
 protected:
 	Display* display;
@@ -53,7 +53,7 @@ public:
 	{
 		std::sort(lines.begin(), lines.end());
 	}
-	virtual void Draw() = 0;
+	virtual void Draw() {}
 
 protected:
 	std::vector<float> lines;
