@@ -1,5 +1,5 @@
 #include "mode.h"
-virtual void FixedSizeWindow::Draw()
+void FixedSizeWindow::Draw()
 {
     int y0, y1;
     if (data->pp->rtPP < scale * (area.height / 2))
@@ -38,7 +38,7 @@ virtual void FixedSizeWindow::Draw()
     }
 }
 
-virtual void ScalingWindow::Draw()
+void ScalingWindow::Draw()
 {
     float scale = data->pp->rtPP / (area.height - margin);
     for (float pp : lines)
@@ -84,7 +84,7 @@ float FixedWindow::max()
     }
     return 0;
 }
-virtual void FixedWindow::Draw()
+void FixedWindow::Draw()
 {
     float scale = max() / area.height;
     int fcLine = (int)(data->pp->fcPP / scale);
@@ -96,7 +96,7 @@ virtual void FixedWindow::Draw()
     }
 }
 
-virtual void AccMode::Draw()
+void AccMode::Draw()
 {
     int scale = data->hit->hit300 + data->hit->hit100 + data->hit->hit50 + data->hit->misses;
     if (scale == 0)
@@ -133,7 +133,7 @@ virtual void AccMode::Draw()
     }
 }
 
-virtual void PPMode::Draw() {
+void PPMode::Draw() {
     char buf[6] = {0};
     sprintf(buf, "%ipp", (int)(((float *)data->pp)[ppType]));
     std::string ppText(buf);
