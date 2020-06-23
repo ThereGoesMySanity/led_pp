@@ -18,7 +18,7 @@ int main(int argc, char **argv)
     struct sigaction int_handler = {};
     int_handler.sa_handler = interruptHandler;
     int_handler.sa_flags = 0;
-    sigemptyset(&a.sa_mask);
+    sigemptyset(&int_handler.sa_mask);
     sigaction(SIGTERM, &int_handler, 0);
     sigaction(SIGINT, &int_handler, 0);
     siginterrupt(SIGINT, 1);
