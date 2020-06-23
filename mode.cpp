@@ -201,9 +201,9 @@ void AccMode::Draw()
     if (scale == 0)
         return;
     float offset = scale * accOffset;
-    int line300 = (int)((data->hit->hit300 - offset) * area.height / (scale - offset));
-    int line100 = (int)((data->hit->hit300 + data->hit->hit100 - offset) * area.height / (scale - offset));
-    int line50 = (int)((data->hit->hit300 + data->hit->hit100 + data->hit->hit50 - offset) * area.height / (scale - offset));
+    int line300 = (int)((data->hit->hit300 - offset) / (scale - offset) * area.height);
+    int line100 = (int)((data->hit->hit300 + data->hit->hit100 - offset) / (scale - offset) * area.height);
+    int line50 = (int)((data->hit->hit300 + data->hit->hit100 + data->hit->hit50 - offset) / (scale - offset) * area.height);
     Color c = c300;
     for (int i = 0; i < area.height; i++)
     {
