@@ -25,6 +25,12 @@ int main(int argc, char **argv)
 
     Display d(mat);
 
+    Connection c;
+    bool connected = c.connect();
+    DataPacket *data = (DataPacket *)c.bufferAddr();
+
+    d.setData({&data->pp, &data->hit, top});
+
     std::regex regex("([A-Z_]*)\\((\\d+),(\\d+),(\\d+),(\\d+),?(.*?)\\)");
     std::string mode;
     file >> mode;
@@ -42,11 +48,6 @@ int main(int argc, char **argv)
         file >> mode;
     }
 
-    Connection c;
-    bool connected = c.connect();
-    DataPacket *data = (DataPacket *)c.bufferAddr();
-
-    d.setData({&data->pp, &data->hit, top});
     d.Start();
 
     while (connected)
