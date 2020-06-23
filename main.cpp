@@ -3,9 +3,9 @@
 #include "display.h"
 #include "api.h"
 #include "mode.h"
-#include "interrupt.h"
 #include "settings.h"
 
+bool interruptReceived = false;
 static void interruptHandler(int signo)
 {
     interruptReceived = true;

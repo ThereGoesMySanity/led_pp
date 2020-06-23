@@ -2,8 +2,8 @@
 #include <iostream>
 #include <unistd.h>
 #include "settings.h"
-#include "interrupt.h"
 #include "mode.h"
+extern bool interruptReceived;
 Settings::Settings(std::string file, Display* display) : d(display), file(file), readThread(&Settings::readLoop, this), modeRegex("([A-Z_]*)\\((\\d+),(\\d+),(\\d+),(\\d+),?(.*?)\\)")
 {
 	eventQueue = inotify_init();

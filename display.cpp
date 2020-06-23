@@ -1,8 +1,8 @@
 #include "display.h"
 #include "mode.h"
-#include "interrupt.h"
 #include <sstream>
 #include <string>
+extern bool interruptReceived;
 
 Display::Display(RGBMatrix *mat) : ThreadedCanvasManipulator(mat)
 {
