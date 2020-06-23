@@ -13,6 +13,7 @@ Settings::Settings(std::string file, Display* display) : d(display), file(file),
 
 Settings::~Settings()
 {
+    readThread.join();
 	inotify_rm_watch(eventQueue, watch);
 	close(eventQueue);
 }

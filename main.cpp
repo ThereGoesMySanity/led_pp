@@ -36,17 +36,20 @@ int main(int argc, char **argv)
 
     Connection c;
     bool connected = c.connect();
-    DataPacket *data = (DataPacket *)c.bufferAddr();
-
-    d.setData({&data->pp, &data->hit, top});
-    settings.loadModes();
-    d.Start();
-
-    while (!interruptReceived && connected)
+    if (connected)
     {
-		while (!interruptReceived && c.getData());
-        data->pp.maxPP = 0;
-        connected = c.connect();
+		DataPacket *data = (DataPacket *)c.bufferAddr();
+
+		d.setData({&data->pp, &data->hit, top});
+		settings.loadModes();
+		d.Start();
+
+		while (!interruptReceived && connected)
+		{
+			while (!interruptReceived && c.getData());
+			data->pp.maxPP = 0;
+			connected = c.connect();
+		}
     }
     mat->Clear();
     delete mat;

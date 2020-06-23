@@ -13,10 +13,10 @@ public:
 	void loadModes();
 private:
 	int eventQueue, watch;
-	std::thread readThread;
 	char buffer[16 * sizeof(struct inotify_event)];
 	std::string file;
 	std::string username;
+	std::thread readThread;
 	std::vector<std::string> modes;
 	Display* d;
 	std::regex modeRegex;
