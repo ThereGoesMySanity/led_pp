@@ -31,7 +31,7 @@ bool Connection::connect() {
     fd_set set;
     FD_ZERO(&set);
     FD_SET(server_fd, &set);
-    if ((select(server_fd + 1, set, NULL, NULL, NULL)) < 0)
+    if ((select(server_fd + 1, &set, NULL, NULL, NULL)) < 0)
     {
         printf("select error\n");
         return false;
