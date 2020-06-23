@@ -39,9 +39,9 @@ void Settings::parse()
 
     std::string mode;
     fs >> mode;
-    while (!file.eof())
+    while (!fs.eof())
     {
-        if (std::regex_match(mode, match, modeRegex))
+        if (std::regex_match(mode, modeRegex))
         {
 			modes.push_back(mode);
         }
