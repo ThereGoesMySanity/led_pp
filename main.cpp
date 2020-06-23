@@ -1,9 +1,11 @@
 #include <regex>
+#include <signal.h>
 #include "connection.h"
 #include "display.h"
 #include "api.h"
 #include "mode.h"
 #include "interrupt.h"
+#include "settings.h"
 
 static void interruptHandler(int signo)
 {
