@@ -1,9 +1,8 @@
-#include <sys/inotify.h>
 #include <fstream>
 #include "settings.h"
 #include "interrupt.h"
 #include "mode.h"
-Settings::Settings(std::string file, Display* display) : display(display), file(file), readThread(&Settings::read, this)
+Settings::Settings(std::string file, Display* display) : display(display), file(file), readThread(&Settings::read, this), modeRegex("([A-Z_]*)\\((\\d+),(\\d+),(\\d+),(\\d+),?(.*?)\\)");
 {
 	eventQueue = inotify_init();
 	watch = inotify_add_watch(eventQueue, file.c_str(), IN_MODIFY);

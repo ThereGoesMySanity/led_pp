@@ -2,6 +2,7 @@
 #define __SETTINGS_H
 #include <thread>
 #include <regex>
+#include <sys/inotify.h>
 #include "display.h"
 class Settings
 {
@@ -18,7 +19,7 @@ private:
 	std::string username;
 	std::vector<std::string> modes;
 	Display* d;
-    std::regex modeRegex("([A-Z_]*)\\((\\d+),(\\d+),(\\d+),(\\d+),?(.*?)\\)");
+	std::regex modeRegex;
 	void read();
 	void parse();
 };
