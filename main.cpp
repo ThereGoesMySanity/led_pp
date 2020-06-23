@@ -15,8 +15,9 @@ static void interruptHandler(int signo)
 bool running;
 int main(int argc, char **argv)
 {
-    signal(SIGTERM, interruptHandler);
-    signal(SIGINT, interruptHandler);
+    struct sigaction int_handler = { .sa_handler = interruptHandler };
+    sigaction(SIGTERM, &int_handler, 0);
+    sigaction(SIGINT, &int_handler, 0);
 
     RGBMatrix::Options defaults;
     defaults.chain_length = 2;
@@ -46,5 +47,6 @@ int main(int argc, char **argv)
         data->pp.maxPP = 0;
         connected = c.connect();
     }
+    mat->Clear();
     delete mat;
 }
