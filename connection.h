@@ -13,5 +13,5 @@ class Connection {
     private:
         int sock, server_fd;
         struct sockaddr_in address;
-        char buffer[256];
+        char buffer[256] = { 0 };
 };

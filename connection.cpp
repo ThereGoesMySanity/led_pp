@@ -32,7 +32,6 @@ bool Connection::connect() {
         return false;
     }
     printf("connection accepted\n");
-    buffer[0] = 0;
     return true;
 }
 /*
