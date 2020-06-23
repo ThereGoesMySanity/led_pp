@@ -3,25 +3,31 @@
 #include "display.h"
 #include "api.h"
 #include "mode.h"
+#include "interrupt.h"
+
+static void interruptHandler(int signo)
+{
+    interruptReceived = true;
+}
 
 #define NUM_TOP_PLAYS 50
-
+bool running;
 int main(int argc, char **argv)
 {
+    signal(SIGTERM, interruptHandler);
+    signal(SIGINT, interruptHandler);
+
     RGBMatrix::Options defaults;
     defaults.chain_length = 2;
     defaults.led_rgb_sequence = "RBG";
     rgb_matrix::RuntimeOptions runtime_opt;
     runtime_opt.drop_privileges = 0;
     RGBMatrix *mat = CreateMatrixFromFlags(&argc, &argv, &defaults, &runtime_opt);
-
-    std::ifstream file;
-    file.open("settings.cfg");
-    std::string name;
-    file >> name;
+    
+    Settings settings("settings.cfg");
 
     API a;
-    std::vector<float> top = a.getUserBest(name, NUM_TOP_PLAYS);
+    std::vector<float> top = a.getUserBest(settings.getName(), NUM_TOP_PLAYS);
 
     Display d(mat);
 
@@ -30,30 +36,12 @@ int main(int argc, char **argv)
     DataPacket *data = (DataPacket *)c.bufferAddr();
 
     d.setData({&data->pp, &data->hit, top});
-
-    std::regex regex("([A-Z_]*)\\((\\d+),(\\d+),(\\d+),(\\d+),?(.*?)\\)");
-    std::string mode;
-    file >> mode;
-    std::smatch match;
-    while (!file.eof())
-    {
-        if (std::regex_match(mode, match, regex))
-        {
-			printf("Added mode %s\n", match[1].str().c_str());
-			d.addMode(match[1],
-					  {std::stoi(match[2].str()), std::stoi(match[3].str()),
-					   std::stoi(match[4].str()), std::stoi(match[5].str())},
-					  match[6]);
-        }
-        file >> mode;
-    }
-
+    settings.loadModes();
     d.Start();
 
-    while (connected)
+    while (!interruptReceived && connected)
     {
-        while (c.getData())
-            ;
+		while (!interruptReceived && c.getData());
         data->pp.maxPP = 0;
         connected = c.connect();
     }

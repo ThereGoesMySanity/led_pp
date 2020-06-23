@@ -8,6 +8,8 @@
 #include <string>
 #include <math.h>
 #include <unistd.h>
+#include <pthread.h>
+#include <mutex>
 #include "rpi-rgb-led-matrix/include/led-matrix.h"
 #include "rpi-rgb-led-matrix/include/graphics.h"
 #include "rpi-rgb-led-matrix/include/canvas.h"
@@ -61,16 +63,18 @@ class Display : public ThreadedCanvasManipulator {
         ~Display();
         void setData(OsuData);
         void addLine(float);
-        void addMode(std::string name, Rectangle area, std::string args);
+        void addMode(Mode* mode);
+        void clearModes();
         void setTopPlays(float*, int);
         virtual void Run();
-        std::vector<Mode *> modes;
+        std::mutex modeLock;
         void DrawNumbers(Font *font, float num, int x, int y, Color c, bool left, int d = 0);
         void DrawNumbers(float num, int x, int y, Color c, bool left, int d = 0);
         void DrawText(Font *font, std::string text, int x, int y, Color c, bool left);
         void DrawLine(int x0, int y0, int x1, int y1, Color c);
         int FontHeight() { return font.CharacterWidth('0'); }
     private:
+        std::vector<Mode *> modes;
         Font font;
         int id;
         OsuData data;
