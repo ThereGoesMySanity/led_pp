@@ -7,6 +7,7 @@
 class Connection {
     public:
         Connection();
+        ~Connection();
         bool connect();
         bool getData();
         void* bufferAddr();

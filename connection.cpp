@@ -27,6 +27,9 @@ Connection::Connection() {
         return;
     }
 }
+Connection::~Connection() {
+    close(server_fd);
+}
 
 bool Connection::connect() {
     int addrlen = sizeof(address);
