@@ -1,4 +1,5 @@
 #include <signal.h>
+#include <sys/socket.h>
 #include "connection.h"
 #include "display.h"
 #include "api.h"
@@ -6,6 +7,7 @@
 #include "settings.h"
 
 bool interruptReceived = false;
+int interruptFd;
 static void interruptHandler(int signo)
 {
     interruptReceived = true;
@@ -21,6 +23,8 @@ int main(int argc, char **argv)
     sigemptyset(&int_handler.sa_mask);
     sigaction(SIGINT, &int_handler, 0);
     siginterrupt(SIGINT, 1);
+
+    interruptFd = socket(AF_UNIX, SOCK_STREAM, 0);
 
     RGBMatrix::Options defaults;
     defaults.chain_length = 2;
