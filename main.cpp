@@ -12,6 +12,7 @@ static void interruptHandler(int signo)
 {
     interruptReceived = true;
     char buf[16] = { 1 };
+    printf("Interrupt handler\n");
     write(interruptFd, &buf, 16);
 }
 
@@ -61,6 +62,11 @@ int main(int argc, char **argv)
 		}
     }
     d.Stop();
+    if (interruptReceived)
+    {
+        char buf[16];
+        read(interruptFd, &buf, 16);
+    }
     close(interruptFd);
     mat->Clear();
     delete mat;
