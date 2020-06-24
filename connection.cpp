@@ -66,6 +66,7 @@ bool Connection::getData() {
     if ((select(std::max(sock, interruptFd) + 1, &set, NULL, NULL, NULL)) < 0 || FD_ISSET(interruptFd, &set))
     {
         printf("interrupt on read\n");
+        return false;
     }
     int result = read(sock, buffer, 256);
     return result > 0;
