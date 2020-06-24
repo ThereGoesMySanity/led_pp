@@ -26,8 +26,13 @@ void Settings::readLoop()
     FD_SET(eventQueue, &set);
 	FD_SET(interruptFd, &set);
 	int max = std::max(eventQueue, interruptFd);
-	while (select(max + 1, &set, NULL, NULL, NULL) > -1 && !FD_ISSET(interruptFd, &set))
+	while (select(max + 1, &set, NULL, NULL, NULL) > -1)
 	{
+		if (FD_ISSET(interruptFd, &set))
+		{
+			printf("interrupt settings read\n");
+			break;
+		}
 		int length = read(eventQueue, buffer, 16 * sizeof(struct inotify_event));
 
 		if (length < 0) break;
@@ -37,6 +42,9 @@ void Settings::readLoop()
 			parse();
 			loadModes();
 		}
+		FD_ZERO(&set);
+		FD_SET(eventQueue, &set);
+		FD_SET(interruptFd, &set);
 	}
 }
 void Settings::parse()
