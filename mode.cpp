@@ -21,7 +21,7 @@ Mode* Mode::CreateMode(Display* d, std::string name, Rectangle r, std::string ar
         {
             type = pdaTable.at(arg);
         }
-        std::string font = "rpi-rgb-led-matrix/fonts/13x6.bdf";
+        std::string font = "../rpi-rgb-led-matrix/fonts/13x6.bdf";
         if (std::getline(ss, arg, ','))
         {
             font = arg;

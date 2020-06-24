@@ -28,12 +28,8 @@ void Settings::readLoop()
 	int max = std::max(eventQueue, interruptFd);
 	while (select(max + 1, &set, NULL, NULL, NULL) > -1)
 	{
-		if (FD_ISSET(interruptFd, &set))
-		{
-			printf("interrupt settings read\n");
-			break;
-		}
-		printf("select has returned\n");
+		if (FD_ISSET(interruptFd, &set)) break;
+
 		int length = read(eventQueue, buffer, 16 * sizeof(struct inotify_event));
 
 		if (length < 0) break;
