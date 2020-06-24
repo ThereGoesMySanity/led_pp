@@ -8,7 +8,7 @@ extern int interruptFd;
 Settings::Settings(std::string file, Display* display) : d(display), file(file), modeRegex("([A-Z_]*)\\((\\d+),(\\d+),(\\d+),(\\d+),?(.*?)\\)")
 {
 	eventQueue = inotify_init();
-	watch = inotify_add_watch(eventQueue, file.c_str(), IN_MODIFY);
+	watch = inotify_add_watch(eventQueue, file.c_str(), IN_CLOSE_WRITE);
 	parse();
 	readThread = std::thread(&Settings::readLoop, this);
 }
@@ -32,7 +32,7 @@ void Settings::readLoop()
 
 		if (length < 0) break;
 		
-		if (((struct inotify_event*)buffer)->mask & IN_MODIFY)
+		if (((struct inotify_event*)buffer)->mask & IN_CLOSE_WRITE)
 		{
 			parse();
 			loadModes();
