@@ -28,6 +28,19 @@ int main(int argc, char **argv)
     //siginterrupt(SIGINT, 1);
 
     interruptFd = socket(AF_UNIX, SOCK_STREAM, 0);
+    timeval time;
+    time.tv_sec = 0;
+    time.tv_usec = 1;
+    fd_set set;
+    FD_ZERO(&set);
+    FD_SET(interruptFd, &set);
+    while (select(interruptFd + 1, &set, NULL, NULL, &time))
+    {
+        char buf[16];
+        read(interruptFd, &buf, 16);
+        buf[15] = 0;
+        printf("what in tarnation %s\n", buf);
+    }
 
     RGBMatrix::Options defaults;
     defaults.chain_length = 2;
@@ -62,11 +75,6 @@ int main(int argc, char **argv)
 		}
     }
     d.Stop();
-    if (interruptReceived)
-    {
-        char buf[16];
-        read(interruptFd, &buf, 16);
-    }
     close(interruptFd);
     mat->Clear();
     delete mat;
