@@ -13,7 +13,7 @@ static void interruptHandler(int signo)
     interruptReceived = true;
     char buf[16] = { 1 };
     printf("Interrupt handler\n");
-    write(interruptFd, &buf, 16);
+    write(interruptFd, buf, 16);
 }
 
 #define NUM_TOP_PLAYS 50
@@ -36,7 +36,7 @@ int main(int argc, char **argv)
     FD_SET(interruptFd, &set);
     while (select(interruptFd + 1, &set, NULL, NULL, &time))
     {
-        char buf[16];
+        char buf[16] = { 0 };
         read(interruptFd, &buf, 16);
         buf[15] = 0;
         printf("what in tarnation %s\n", buf);
