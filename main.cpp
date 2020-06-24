@@ -1,5 +1,6 @@
 #include <signal.h>
 #include <sys/socket.h>
+#include <unistd.h>
 #include "connection.h"
 #include "display.h"
 #include "api.h"
@@ -8,12 +9,13 @@
 
 bool interruptReceived = false;
 int interruptFd;
+int writeInterruptFd;
 static void interruptHandler(int signo)
 {
     interruptReceived = true;
     char buf[16] = { 1 };
     printf("Interrupt handler\n");
-    write(interruptFd, buf, 16);
+    write(writeInterruptFd, buf, 16);
 }
 
 #define NUM_TOP_PLAYS 50
@@ -27,20 +29,11 @@ int main(int argc, char **argv)
     sigaction(SIGINT, &int_handler, 0);
     //siginterrupt(SIGINT, 1);
 
-    interruptFd = socket(AF_UNIX, SOCK_STREAM, 0);
-    timeval time;
-    time.tv_sec = 0;
-    time.tv_usec = 1;
-    fd_set set;
-    FD_ZERO(&set);
-    FD_SET(interruptFd, &set);
-    while (select(interruptFd + 1, &set, NULL, NULL, &time))
-    {
-        char buf[16] = { 0 };
-        int count = read(interruptFd, buf, 16);
-        buf[15] = 0;
-        printf("what in tarnation %i %s\n", count, buf);
-    }
+    int pipefds[2];
+    pipe(pipefds);
+    interruptFd = pipefds[0];
+    writeInterruptFd = pipefds[1];
+    
 
     RGBMatrix::Options defaults;
     defaults.chain_length = 2;
@@ -75,7 +68,8 @@ int main(int argc, char **argv)
 		}
     }
     d.Stop();
-    close(interruptFd);
     mat->Clear();
     delete mat;
+    close(interruptFd);
+    close(writeInterruptFd);
 }
