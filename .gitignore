@@ -6,3 +6,7 @@ key.dat
 
 build/*
 .vscode/*
+/.vs
+/out/build/x64-Debug
+/out
+/CMakeSettings.json

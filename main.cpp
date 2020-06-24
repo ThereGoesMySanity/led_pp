@@ -1,57 +1,74 @@
-#include <regex>
+#include <signal.h>
+#include <sys/socket.h>
+#include <unistd.h>
 #include "connection.h"
 #include "display.h"
 #include "api.h"
 #include "mode.h"
+#include "settings.h"
+
+bool interruptReceived = false;
+int interruptFd;
+int writeInterruptFd;
+static void interruptHandler(int signo)
+{
+    interruptReceived = true;
+    char buf[16] = { 1 };
+    printf("Interrupt handler\n");
+    write(writeInterruptFd, buf, 16);
+}
 
 #define NUM_TOP_PLAYS 50
-
+bool running;
 int main(int argc, char **argv)
 {
+    struct sigaction int_handler = {};
+    int_handler.sa_handler = interruptHandler;
+    int_handler.sa_flags = 0;
+    sigemptyset(&int_handler.sa_mask);
+    sigaction(SIGINT, &int_handler, 0);
+    //siginterrupt(SIGINT, 1);
+
+    int pipefds[2];
+    pipe(pipefds);
+    interruptFd = pipefds[0];
+    writeInterruptFd = pipefds[1];
+
     RGBMatrix::Options defaults;
     defaults.chain_length = 2;
     defaults.led_rgb_sequence = "RBG";
     rgb_matrix::RuntimeOptions runtime_opt;
     runtime_opt.drop_privileges = 0;
     RGBMatrix *mat = CreateMatrixFromFlags(&argc, &argv, &defaults, &runtime_opt);
-
-    std::ifstream file;
-    file.open("settings.cfg");
-    std::string name;
-    file >> name;
-
-    API a;
-    std::vector<float> top = a.getUserBest(name, NUM_TOP_PLAYS);
-
+    
     Display d(mat);
 
-    std::regex regex("([A-Z_]*)\\((\\d+),(\\d+),(\\d+),(\\d+),?(.*?)\\)");
-    std::string mode;
-    file >> mode;
-    std::smatch match;
-    while (!file.eof() && std::regex_match(mode, match, regex))
-    {
-        printf("Added mode %s\n", match[1].str().c_str());
-        d.addMode(match[1],
-                  {std::stoi(match[2].str()), std::stoi(match[3].str()),
-                   std::stoi(match[4].str()), std::stoi(match[5].str())},
-                  match[6]);
-        file >> mode;
-    }
+    Settings settings("settings.cfg", &d);
+
+    API a;
+    std::vector<float> top = a.getUserBest(settings.getName(), NUM_TOP_PLAYS);
 
     Connection c;
     bool connected = c.connect();
-    DataPacket *data = (DataPacket *)c.bufferAddr();
-
-    d.setData({&data->pp, &data->hit, top});
-    d.Start();
-
-    while (connected)
+    if (connected)
     {
-        while (c.getData())
-            ;
-        data->pp.maxPP = 0;
-        connected = c.connect();
+		DataPacket *data = (DataPacket *)c.bufferAddr();
+
+		d.setData({&data->pp, &data->hit, top});
+		settings.loadModes();
+		d.Start();
+
+		while (!interruptReceived && connected)
+		{
+			while (!interruptReceived && c.getData());
+            if (interruptReceived) break;
+			data->pp.maxPP = 0;
+			connected = c.connect();
+		}
     }
+    d.Stop();
+    mat->Clear();
     delete mat;
+    close(interruptFd);
+    close(writeInterruptFd);
 }

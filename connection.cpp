@@ -1,4 +1,7 @@
+#include <sys/select.h>
 #include "connection.h"
+#include <algorithm>
+extern int interruptFd;
 Connection::Connection() {
     int opt = 1;
     if((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0){
@@ -24,15 +27,27 @@ Connection::Connection() {
         return;
     }
 }
+Connection::~Connection() {
+    close(server_fd);
+}
+
 bool Connection::connect() {
     int addrlen = sizeof(address);
+    fd_set set;
+    FD_ZERO(&set);
+    FD_SET(server_fd, &set);
+    FD_SET(interruptFd, &set);
+    if ((select(std::max(server_fd, interruptFd) + 1, &set, NULL, NULL, NULL)) < 0 || FD_ISSET(interruptFd, &set))
+    {
+        printf("interrupt on connect %i\n", FD_ISSET(interruptFd, &set));
+        return false;
+    }
     if((sock = accept(server_fd, (struct sockaddr*)&address,
                     (socklen_t*)&addrlen)) < 0) {
         printf("accept error\n");
         return false;
     }
     printf("connection accepted\n");
-    buffer[0] = 0;
     return true;
 }
 /*
@@ -44,6 +59,15 @@ void Connection::test() {
 }
 */
 bool Connection::getData() {
+    fd_set set;
+    FD_ZERO(&set);
+    FD_SET(sock, &set);
+    FD_SET(interruptFd, &set);
+    if ((select(std::max(sock, interruptFd) + 1, &set, NULL, NULL, NULL)) < 0 || FD_ISSET(interruptFd, &set))
+    {
+        printf("interrupt on read\n");
+        return false;
+    }
     int result = read(sock, buffer, 256);
     return result > 0;
 }
