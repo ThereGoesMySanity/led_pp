@@ -3,7 +3,6 @@
 #include <unistd.h>
 #include "settings.h"
 #include "mode.h"
-extern bool interruptReceived;
 extern int interruptFd;
 Settings::Settings(std::string file, Display* display) : d(display), file(file), modeRegex("([A-Z_]*)\\((\\d+),(\\d+),(\\d+),(\\d+),?(.*?)\\)")
 {
@@ -21,6 +20,7 @@ Settings::~Settings()
 }
 void Settings::readLoop()
 {
+	char buffer[16 * sizeof(struct inotify_event)];
     fd_set set;
     FD_ZERO(&set);
     FD_SET(eventQueue, &set);
@@ -33,6 +33,7 @@ void Settings::readLoop()
 			printf("interrupt settings read\n");
 			break;
 		}
+		printf("select has returned\n");
 		int length = read(eventQueue, buffer, 16 * sizeof(struct inotify_event));
 
 		if (length < 0) break;

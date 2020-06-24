@@ -33,7 +33,6 @@ int main(int argc, char **argv)
     pipe(pipefds);
     interruptFd = pipefds[0];
     writeInterruptFd = pipefds[1];
-    
 
     RGBMatrix::Options defaults;
     defaults.chain_length = 2;

@@ -13,7 +13,6 @@ public:
 	void loadModes();
 private:
 	int eventQueue, watch;
-	char buffer[16 * sizeof(struct inotify_event)];
 	std::string file;
 	std::string username;
 	std::thread readThread;
