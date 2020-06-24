@@ -10,10 +10,10 @@
 #include <unistd.h>
 #include <pthread.h>
 #include <mutex>
-#include "../../rpi-rgb-led-matrix/include/led-matrix.h"
-#include "../../rpi-rgb-led-matrix/include/graphics.h"
-#include "../../rpi-rgb-led-matrix/include/canvas.h"
-#include "../../rpi-rgb-led-matrix/include/threaded-canvas-manipulator.h"
+#include "led-matrix.h"
+#include "graphics.h"
+#include "canvas.h"
+#include "threaded-canvas-manipulator.h"
 using namespace rgb_matrix;
 
 const struct Color FC_LINE(200, 200, 200);
