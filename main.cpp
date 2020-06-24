@@ -37,7 +37,7 @@ int main(int argc, char **argv)
     while (select(interruptFd + 1, &set, NULL, NULL, &time))
     {
         char buf[16] = { 0 };
-        int count = read(interruptFd, &buf, 16);
+        int count = read(interruptFd, buf, 16);
         buf[15] = 0;
         printf("what in tarnation %i %s\n", count, buf);
     }
