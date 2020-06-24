@@ -52,7 +52,8 @@ void Settings::parse()
     std::ifstream fs;
     fs.open(file);
 	fs >> username;
-
+	
+	modes.clear();
     std::string mode;
     fs >> mode;
     while (!fs.eof())
