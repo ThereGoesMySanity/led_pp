@@ -37,6 +37,7 @@ void Settings::readLoop()
 		parse();
 		loadModes();
 
+		if (((struct inotify_event*)buffer)->mask & IN_IGNORED) watch = inotify_add_watch(eventQueue, file.c_str(), IN_CLOSE_WRITE | IN_MOVED_TO);
 		FD_ZERO(&set);
 		FD_SET(eventQueue, &set);
 		FD_SET(interruptFd, &set);
