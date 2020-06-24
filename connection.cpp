@@ -1,5 +1,7 @@
 #include <sys/select.h>
 #include "connection.h"
+#include <algorithm>
+extern int interruptFd;
 Connection::Connection() {
     int opt = 1;
     if((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0){
@@ -31,9 +33,10 @@ bool Connection::connect() {
     fd_set set;
     FD_ZERO(&set);
     FD_SET(server_fd, &set);
-    if ((select(server_fd + 1, &set, NULL, NULL, NULL)) < 0)
+    FD_SET(interruptFd, &set);
+    if ((select(std::max(server_fd, interruptFd) + 1, &set, NULL, NULL, NULL)) < 0 || FD_ISSET(interruptFd, &set))
     {
-        printf("select error\n");
+        printf("interrupt on connect\n");
         return false;
     }
     if((sock = accept(server_fd, (struct sockaddr*)&address,
@@ -53,6 +56,14 @@ void Connection::test() {
 }
 */
 bool Connection::getData() {
+    fd_set set;
+    FD_ZERO(&set);
+    FD_SET(sock, &set);
+    FD_SET(interruptFd, &set);
+    if ((select(std::max(sock, interruptFd) + 1, &set, NULL, NULL, NULL)) < 0 || FD_ISSET(interruptFd, &set))
+    {
+        printf("interrupt on read\n");
+    }
     int result = read(sock, buffer, 256);
     return result > 0;
 }

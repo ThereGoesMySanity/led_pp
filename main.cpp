@@ -11,6 +11,8 @@ int interruptFd;
 static void interruptHandler(int signo)
 {
     interruptReceived = true;
+    char buf[16] = { 1 };
+    write(interruptFd, &buf, 16);
 }
 
 #define NUM_TOP_PLAYS 50
@@ -22,7 +24,7 @@ int main(int argc, char **argv)
     int_handler.sa_flags = 0;
     sigemptyset(&int_handler.sa_mask);
     sigaction(SIGINT, &int_handler, 0);
-    siginterrupt(SIGINT, 1);
+    //siginterrupt(SIGINT, 1);
 
     interruptFd = socket(AF_UNIX, SOCK_STREAM, 0);
 

@@ -36,6 +36,7 @@ typedef struct HitData {
     int hit100;
     int hit50;
     int misses;
+    int combo;
 } HitData;
 
 typedef struct DataPacket {

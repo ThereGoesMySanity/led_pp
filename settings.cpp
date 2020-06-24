@@ -4,6 +4,7 @@
 #include "settings.h"
 #include "mode.h"
 extern bool interruptReceived;
+extern int interruptFd;
 Settings::Settings(std::string file, Display* display) : d(display), file(file), modeRegex("([A-Z_]*)\\((\\d+),(\\d+),(\\d+),(\\d+),?(.*?)\\)")
 {
 	eventQueue = inotify_init();
@@ -20,7 +21,12 @@ Settings::~Settings()
 }
 void Settings::readLoop()
 {
-	while (!interruptReceived)
+    fd_set set;
+    FD_ZERO(&set);
+    FD_SET(eventQueue, &set);
+	FD_SET(interruptFd, &set);
+	int max = std::max(eventQueue, interruptFd);
+	while (select(max + 1, &set, NULL, NULL, NULL) > -1 && !FD_ISSET(interruptFd, &set))
 	{
 		int length = read(eventQueue, buffer, 16 * sizeof(struct inotify_event));
 
