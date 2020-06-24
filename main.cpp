@@ -61,6 +61,7 @@ int main(int argc, char **argv)
 		}
     }
     d.Stop();
+    close(interruptFd);
     mat->Clear();
     delete mat;
 }
