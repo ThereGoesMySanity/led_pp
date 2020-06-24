@@ -53,6 +53,7 @@ public:
     }
 
 protected:
+    void DrawLines(int y0, float scale);
     std::vector<float> lines;
     bool drawBarText, drawLineText;
 };

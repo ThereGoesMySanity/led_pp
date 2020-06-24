@@ -1,41 +1,9 @@
 #include "mode.h"
+#include <algorithm>
 void FixedSizeWindow::Draw()
 {
-    int y0, y1;
-    if (data->pp->rtPP < scale * (area.height / 2))
-    {
-        y0 = area.y;
-        y1 = scale * area.height;
-    }
-    else
-    {
-        y0 = data->pp->rtPP - scale * (area.height / 2);
-        y1 = data->pp->rtPP + scale * (area.height / 2);
-    }
-    int line = (data->pp->rtPP - y0) / scale;
-    for (int i = 0; i < line; i++)
-    {
-        display->DrawLine(area.x, i, area.x + area.width, i, CURRENT_PLAY);
-    }
-    for (int i = 0; i < lines.size(); i++)
-    {
-        int yval = (lines[i] - y0) / scale;
-        if (yval >= area.y && yval < area.height)
-        {
-            display->DrawLine(area.x, yval, area.x + area.width, yval, LINE_COLOR);
-            if (drawLineText)
-            {
-                if (i == 0 || (yval + display->FontHeight() + 2 < (lines[i - 1] - y0) / scale))
-                {
-                    display->DrawNumbers(lines[i], area.x + area.width - 4, yval + 2, LINE_COLOR, false);
-                }
-                else if (i == lines.size() - 1 || (yval - display->FontHeight() - 2 > (lines[i + 1] - y0) / scale))
-                {
-                    display->DrawNumbers(lines[i], area.x + area.width - 4, yval - 2 - display->FontHeight(), LINE_COLOR, false);
-                }
-            }
-        }
-    }
+    int y0 = (int)std::min(0.f, data->pp->rtPP - scale * (area.height / 2));
+    DrawLines(y0, scale);
 }
 
 void ScalingWindow::Draw()
@@ -50,26 +18,32 @@ void ScalingWindow::Draw()
         }
     }
     if (integerScales) scale = (int)scale;
-    for (int i = 0; i < area.height; i++)
+    DrawLines(0, scale);
+}
+
+void LineMode::DrawLines(int y0, float scale)
+{
+    int line = (data->pp->rtPP - y0) / scale;
+    for (int i = 0; i < line; i++)
     {
-        if (scale * i < data->pp->rtPP)
-        {
-            display->DrawLine(area.x, i, area.x + area.width, i, CURRENT_PLAY);
-        }
+        display->DrawLine(area.x, area.y + i, area.x + area.width - 1, area.y + i, CURRENT_PLAY);
     }
     for (int i = 0; i < lines.size(); i++)
     {
-        int yval = lines[i] / scale;
-        display->DrawLine(area.x, yval, area.x + area.width, yval, LINE_COLOR);
-        if (drawLineText)
+        int yval = (lines[i] - y0) / scale;
+        if (yval < area.height)
         {
-            if (i == 0 || (yval + display->FontHeight() + 2 < lines[i - 1] / scale))
+            display->DrawLine(area.x, area.y + yval, area.x + area.width - 1, area.y + yval, LINE_COLOR);
+            if (drawLineText)
             {
-                display->DrawNumbers(lines[i], area.x + area.width - 4, yval + 2, LINE_COLOR, false);
-            }
-            else if (i == lines.size() - 1 || (yval - display->FontHeight() - 2 > lines[i + 1] / scale))
-            {
-                display->DrawNumbers(lines[i], area.x + area.width - 4, yval - 2 - display->FontHeight(), LINE_COLOR, false);
+                if (i == 0 || (yval + display->FontHeight() + 2 < (lines[i - 1] - y0) / scale))
+                {
+                    display->DrawNumbers(lines[i], area.x + area.width - 2, area.y + yval + 2, LINE_COLOR, false);
+                }
+                else if (i == lines.size() - 1 || (yval - display->FontHeight() - 2 > (lines[i + 1] - y0) / scale))
+                {
+                    display->DrawNumbers(lines[i], area.x + area.width - 2, area.y + yval - 2 - display->FontHeight(), LINE_COLOR, false);
+                }
             }
         }
     }
