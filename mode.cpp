@@ -139,13 +139,13 @@ void LineMode::DrawLines(int y0, float scale)
         if (yval < area.height)
         {
             display->DrawLine(area.x, area.y + yval, area.x + area.width - 1, area.y + yval, LINE_COLOR);
-            if (i == 0 || (yval + display->FontHeight() + 2 < lines[i - 1] / scale))
-            {
-                display->DrawNumbers(lines[i], area.x + area.width - 2, area.y + yval + display->FontHeight() + 2, LINE_COLOR, false);
-            }
-            else if (i == lines.size() - 1 || (yval - display->FontHeight() - 2 > lines[i + 1] / scale))
+            if (i == 0 || (yval - display->FontHeight() - 2 < (lines[i - 1] - y0) / scale))
             {
                 display->DrawNumbers(lines[i], area.x + area.width - 2, area.y + yval - 2, LINE_COLOR, false);
+            }
+            else if (i == lines.size() - 1 || (yval + display->FontHeight() + 2 > (lines[i + 1] - y0) / scale))
+            {
+                display->DrawNumbers(lines[i], area.x + area.width - 2, area.y + yval + display->FontHeight() + 2, LINE_COLOR, false);
             }
         }
     }
@@ -213,6 +213,6 @@ void PPMode::Draw() {
     char buf[6] = {0};
     sprintf(buf, "%ipp", (int)(((float *)data->pp)[ppType]));
     std::string ppText(buf);
-    int offset = (area.width - ppText.size() * display->FontWidth()) / 2;
+    int offset = (area.width - ppText.size() * font.height()) / 2;
     display->DrawText(&font, ppText, area.x + offset, area.y + area.height - 2, c, true);
 }
