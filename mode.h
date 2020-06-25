@@ -51,7 +51,7 @@ public:
 	LineMode(Display* display, Rectangle area, OsuData* data, std::vector<float> lines, bool drawBarText = false, bool drawLineText = true)
 		: Mode(display, area, data), lines(lines), drawBarText(drawBarText), drawLineText(drawLineText)
 	{
-		std::sort(lines.begin(), lines.end());
+		std::sort(this->lines.begin(), this->lines.end());
 	}
 	virtual void Draw() {}
 
