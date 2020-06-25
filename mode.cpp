@@ -138,7 +138,9 @@ void LineMode::DrawLines(int y0, float scale)
         int yval = (lines[i] - y0) / scale;
         if (yval < area.height)
         {
-            display->DrawLine(area.x, area.y + yval, area.x + area.width - 1, area.y + yval, LINE_COLOR);
+            Color color = LINE_COLOR;
+            if (lines[i] < data->pp->rtPP) color = Color(200, 255, 200);
+            display->DrawLine(area.x, area.y + yval, area.x + area.width - 1, area.y + yval, color);
             if (i == 0 || (yval - display->FontHeight() - 2 > (lines[i - 1] - y0) / scale))
             {
                 display->DrawNumbers(lines[i], area.x + area.width - 2, area.y + yval - 2, LINE_COLOR, false);
