@@ -136,10 +136,10 @@ void LineMode::DrawLines(int y0, float scale)
     for (int i = 0; i < lines.size(); i++)
     {
         int yval = (lines[i] - y0) / scale;
-        if (yval < area.height)
+        if (yval >= 0 && yval < area.height)
         {
             Color color = LINE_COLOR;
-            if (lines[i] < data->pp->rtPP) color = Color(200, 255, 200);
+            if (lines[i] < data->pp->rtPP) color = Color(160, 160, 255);
             display->DrawLine(area.x, area.y + yval, area.x + area.width - 1, area.y + yval, color);
             if (i == 0 || (yval - display->FontHeight() - 2 > (lines[i - 1] - y0) / scale))
             {
