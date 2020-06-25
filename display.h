@@ -74,6 +74,7 @@ class Display : public ThreadedCanvasManipulator {
         void DrawText(Font *font, std::string text, int x, int y, Color c, bool left);
         void DrawLine(int x0, int y0, int x1, int y1, Color c);
         int FontHeight() { return font.CharacterWidth('0'); }
+        int FontWidth() { return font.height(); }
         OsuData data;
     private:
         std::vector<Mode *> modes;

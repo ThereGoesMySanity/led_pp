@@ -213,5 +213,6 @@ void PPMode::Draw() {
     char buf[6] = {0};
     sprintf(buf, "%ipp", (int)(((float *)data->pp)[ppType]));
     std::string ppText(buf);
-    display->DrawText(&font, ppText, area.x, area.y + area.height - 2, c, true);
+    int offset = (area.width - ppText.size() * display->FontWidth()) / 2;
+    display->DrawText(&font, ppText, area.x + offset, area.y + area.height - 2, c, true);
 }
