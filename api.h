@@ -4,6 +4,8 @@
 #include <iostream>
 #include <fstream>
 #include "json.hpp"
+#ifndef __API_H
+#define __API_H
 class API {
     public:
         API();
@@ -13,3 +15,4 @@ class API {
         std::string data;
         CURL *c;
 };
+#endif

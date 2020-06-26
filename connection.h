@@ -4,6 +4,8 @@
 #include <netinet/in.h>
 #include <string.h>
 #include <unistd.h>
+#ifndef __CONNECTION_H
+#define __CONNECTION_H
 class Connection {
     public:
         Connection();
@@ -16,3 +18,4 @@ class Connection {
         struct sockaddr_in address;
         char buffer[256] = { 0 };
 };
+#endif

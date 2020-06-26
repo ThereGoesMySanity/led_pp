@@ -48,16 +48,15 @@ private:
 class LineMode : public Mode
 {
 public:
-	LineMode(Display* display, Rectangle area, OsuData* data, std::vector<float> lines, bool drawBarText = false, bool drawLineText = true)
+	LineMode(Display* display, Rectangle area, OsuData* data, std::vector<float>* lines, bool drawBarText = false, bool drawLineText = true)
 		: Mode(display, area, data), lines(lines), drawBarText(drawBarText), drawLineText(drawLineText)
 	{
-		std::sort(this->lines.begin(), this->lines.end());
 	}
 	virtual void Draw() {}
 
 protected:
     void DrawLines(int y0, float scale);
-    std::vector<float> lines;
+    std::vector<float>* lines;
     bool drawBarText, drawLineText;
 };
 enum FixedWindowMaxTypes
@@ -83,7 +82,7 @@ private:
 class FixedSizeWindow : public LineMode
 {
 public:
-	FixedSizeWindow(Display* display, Rectangle area, OsuData* data, std::vector<float> lines, float scale, bool locked, bool drawBarText, bool drawLineText)
+	FixedSizeWindow(Display* display, Rectangle area, OsuData* data, std::vector<float>* lines, float scale, bool locked, bool drawBarText, bool drawLineText)
 		: LineMode(display, area, data, lines, drawBarText, drawLineText), scale(scale), locked(locked) {}
 	virtual void Draw();
 
@@ -95,7 +94,7 @@ private:
 class ScalingWindow : public LineMode
 {
 public:
-	ScalingWindow(Display* display, Rectangle area, OsuData* data, std::vector<float> lines, int margin, bool integerScales, bool drawBarText, bool drawLineText)
+	ScalingWindow(Display* display, Rectangle area, OsuData* data, std::vector<float>* lines, int margin, bool integerScales, bool drawBarText, bool drawLineText)
 		: LineMode(display, area, data, lines, drawBarText, drawLineText), margin(margin), integerScales(integerScales) {}
 	virtual void Draw();
 

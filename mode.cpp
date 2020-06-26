@@ -64,7 +64,7 @@ Mode* Mode::CreateMode(Display* d, std::string name, Rectangle r, std::string ar
         {
             drawLineText = arg.compare("true") == 0;
         }
-        mode = new FixedSizeWindow(d, r, &d->data, d->data.topPlays, scale, locked, drawBarText, drawLineText);
+        mode = new FixedSizeWindow(d, r, &d->data, &d->settings->topPlays, scale, locked, drawBarText, drawLineText);
     }
     else if (name.compare("SCALING_BAR") == 0)
     {
@@ -88,7 +88,7 @@ Mode* Mode::CreateMode(Display* d, std::string name, Rectangle r, std::string ar
         {
             drawLineText = arg.compare("true") == 0;
         }
-        mode = new ScalingWindow(d, r, &d->data, d->data.topPlays, margin, integerScales, drawBarText, drawLineText);
+        mode = new ScalingWindow(d, r, &d->data, &d->settings->topPlays, margin, integerScales, drawBarText, drawLineText);
     }
     return mode;
 }
@@ -114,7 +114,7 @@ void FixedSizeWindow::Draw()
 void ScalingWindow::Draw()
 {
     float scale = data->pp->rtPP / (area.height - margin);
-    for (float pp : lines)
+    for (float pp : *lines)
     {
         if (pp > data->pp->rtPP)
         {
@@ -129,6 +129,7 @@ void ScalingWindow::Draw()
 void LineMode::DrawLines(int y0, float scale)
 {
     int line = (data->pp->rtPP - y0) / scale;
+    std::vector<float> lines(*this->lines);
     for (int i = 0; i < line; i++)
     {
         display->DrawLine(area.x, area.y + i, area.x + area.width - 1, area.y + i, CURRENT_PLAY);
@@ -157,7 +158,7 @@ float FixedWindow::max()
 {
     switch (maxType) {
         case MAX_PP: return data->pp->maxPP;
-        case TOP_PLAY: return data->topPlays[0];
+        case TOP_PLAY: return display->settings->topPlays[0];
         case CUSTOM: return customMax;
     }
     return 0;

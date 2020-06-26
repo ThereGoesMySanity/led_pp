@@ -4,7 +4,6 @@
 #include <getopt.h>
 #include "connection.h"
 #include "display.h"
-#include "api.h"
 #include "mode.h"
 #include "settings.h"
 
@@ -40,17 +39,13 @@ int main(int argc, char **argv)
     runtime_opt.drop_privileges = 0;
     RGBMatrix *mat = CreateMatrixFromFlags(&argc, &argv, &defaults, &runtime_opt);
     
-    Display d(mat);
-
-    Settings settings("settings.cfg", &d, argc, argv);
-
     Connection c;
+    Settings settings("settings.cfg", argc, argv);
+    Display d(mat, &c, &settings);
+
     bool connected = c.connect();
     if (connected)
     {
-		DataPacket *data = (DataPacket *)c.bufferAddr();
-
-		d.setData({&data->pp, &data->hit, top});
 		settings.loadModes();
 		d.Start();
 
@@ -58,7 +53,7 @@ int main(int argc, char **argv)
 		{
 			while (!interruptReceived && c.getData());
             if (interruptReceived) break;
-			data->pp.maxPP = 0;
+            *(float*)(c.bufferAddr()) = 0.f;
 			connected = c.connect();
 		}
     }

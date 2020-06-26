@@ -14,6 +14,8 @@
 #include <graphics.h>
 #include <canvas.h>
 #include <threaded-canvas-manipulator.h>
+#include "connection.h"
+#include "settings.h"
 using namespace rgb_matrix;
 
 const struct Color FC_LINE(200, 200, 200);
@@ -50,7 +52,6 @@ static std::unordered_map<std::string,int> const pdaTable = {{"MAX", 0}, {"FC", 
 typedef struct OsuData {
     PPData* pp;
     HitData* hit;
-    std::vector<float> topPlays;
 } OsuData;
 
 struct Rectangle;
@@ -60,13 +61,11 @@ class Mode;
 
 class Display : public ThreadedCanvasManipulator {
     public:
-        Display(RGBMatrix *mat);
+        Display(RGBMatrix *mat, Connection* c, Settings* s);
         ~Display();
-        void setData(OsuData);
         void addLine(float);
         void addMode(Mode* mode);
         void clearModes();
-        void setTopPlays(float*, int);
         virtual void Run();
         std::mutex modeLock;
         void DrawNumbers(Font *font, float num, int x, int y, Color c, bool left, int d = 0);
@@ -76,6 +75,7 @@ class Display : public ThreadedCanvasManipulator {
         int FontHeight() { return font.CharacterWidth('0'); }
         int FontWidth() { return font.height(); }
         OsuData data;
+        Settings* settings;
     private:
         std::vector<Mode *> modes;
         Font font;

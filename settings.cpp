@@ -4,8 +4,8 @@
 #include "settings.h"
 #include "mode.h"
 extern int interruptFd;
-Settings::Settings(std::string file, Display* display, int argc, char** argv)
-	: d(display), file(file), modeRegex("([A-Z_]*)\\((\\d+),(\\d+),(\\d+),(\\d+),?(.*?)\\)")
+Settings::Settings(std::string file, int argc, char** argv)
+	: file(file), modeRegex("([A-Z_]*)\\((\\d+),(\\d+),(\\d+),(\\d+),?(.*?)\\)")
 	, cmd("LED matrix pp display", ' ', "0.5")
 	, playcount("t","top-plays","Number of top plays to get",false,50,"int",cmd)
 {
@@ -57,7 +57,8 @@ void Settings::parse()
 	if (uname.compare(username) != 0)
 	{
 		username = uname;
-		topPlays = a.getUserBest(username, playcount);
+		topPlays = api.getUserBest(username, playcount);
+		std::sort(topPlays.begin(), topPlays.end());
 	}
 	
 	modes.clear();
@@ -76,18 +77,18 @@ void Settings::parse()
 
 void Settings::loadModes()
 {
-	if (d->data.pp == nullptr) return;
+	if (display == nullptr) return;
     std::smatch match;
-	std::lock_guard<std::mutex> lock(d->modeLock);
-	d->clearModes();
+	std::lock_guard<std::mutex> lock(display->modeLock);
+	display->clearModes();
 	for (std::string modeStr : modes)
 	{
 		std::regex_match(modeStr, match, modeRegex);
 		printf("Added mode %s\n", match[1].str().c_str());
-		Mode* mode = Mode::CreateMode(d, match[1],
+		Mode* mode = Mode::CreateMode(display, match[1],
 			{ std::stoi(match[2].str()), std::stoi(match[3].str()),
 			 std::stoi(match[4].str()), std::stoi(match[5].str()) },
 			match[6]);
-		d->addMode(mode);
+		display->addMode(mode);
 	}
 }

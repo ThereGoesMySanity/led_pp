@@ -4,8 +4,10 @@
 #include <string>
 extern bool interruptReceived;
 
-Display::Display(RGBMatrix* mat) : ThreadedCanvasManipulator(mat)
+Display::Display(RGBMatrix* mat, Connection* c, Settings* s) : ThreadedCanvasManipulator(mat), settings(s)
 {
+	DataPacket* buf = (DataPacket*)c->bufferAddr();
+	data = { &buf->pp, &buf->hit };
 	font.LoadFont("../rpi-rgb-led-matrix/fonts/6x4-4.bdf");
 }
 Display::~Display()
@@ -56,11 +58,6 @@ void Display::addLine(float line)
 	m_pp_lines.insert(line);
 }
 
-void Display::setData(OsuData data)
-{
-	this->data = data;
-}
-
 void Display::clearModes() {
 	for (Mode* m : modes) delete m;
 	modes.clear();
@@ -72,10 +69,4 @@ void Display::addMode(Mode* mode)
 	{
 		modes.push_back(mode);
 	}
-}
-
-void Display::setTopPlays(float* f, int count)
-{
-	m_top_plays = f;
-	m_plays_count = count;
 }

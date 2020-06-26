@@ -12,7 +12,6 @@ target_include_directories(led_pp PUBLIC ${RGBMATRIX_LOCATION}/include)
 target_link_libraries(led_pp curl)
 target_link_libraries(led_pp ${RGBMATRIX_LOCATION}/lib/librgbmatrix.so.1)
 target_link_libraries(led_pp pthread)
-target_link_libraries(led_pp tclap)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
