@@ -19,6 +19,7 @@ private:
 	std::string file;
 	std::string username;
 	std::thread readThread;
+	TCLAP::CmdLine cmd;
 	TCLAP::ValueArg<int> playcount;
 	std::vector<std::string> modes;
 	Display* d;

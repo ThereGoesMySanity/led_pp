@@ -6,16 +6,15 @@
 extern int interruptFd;
 Settings::Settings(std::string file, Display* display, int argc, char** argv)
 	: d(display), file(file), modeRegex("([A-Z_]*)\\((\\d+),(\\d+),(\\d+),(\\d+),?(.*?)\\)")
+	, cmd("LED matrix pp display", ' ', "0.5")
+	, playcount("t","top-plays","Number of top plays to get",false,50,"int",cmd)
 {
-    TCLAP::CmdLine cmd("LED matrix pp display", ' ', "0.5");
-    playcount = TCLAP::ValueArg<int>("t","top-plays","Number of top plays to get",false,50,"int",cmd);
     cmd.parse(argc, argv);
 
 	eventQueue = inotify_init();
 	watch = inotify_add_watch(eventQueue, file.c_str(), IN_CLOSE_WRITE | IN_MOVED_TO);
 	parse();
 	readThread = std::thread(&Settings::readLoop, this);
-
 }
 
 Settings::~Settings()

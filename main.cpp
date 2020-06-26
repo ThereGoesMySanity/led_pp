@@ -42,7 +42,7 @@ int main(int argc, char **argv)
     
     Display d(mat);
 
-    Settings settings("settings.cfg", &d);
+    Settings settings("settings.cfg", &d, argc, argv);
 
     Connection c;
     bool connected = c.connect();
