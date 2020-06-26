@@ -2,7 +2,6 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <getopt.h>
-#include <tclap/CmdLine.h>
 #include "connection.h"
 #include "display.h"
 #include "api.h"

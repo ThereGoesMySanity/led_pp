@@ -3,7 +3,9 @@
 #include <thread>
 #include <regex>
 #include <sys/inotify.h>
+#include <tclap/CmdLine.h>
 #include "display.h"
+#include "api.h"
 class Settings
 {
 public:
