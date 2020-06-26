@@ -4,12 +4,18 @@
 #include "settings.h"
 #include "mode.h"
 extern int interruptFd;
-Settings::Settings(std::string file, Display* display) : d(display), file(file), modeRegex("([A-Z_]*)\\((\\d+),(\\d+),(\\d+),(\\d+),?(.*?)\\)")
+Settings::Settings(std::string file, Display* display, int argc, char** argv)
+	: d(display), file(file), modeRegex("([A-Z_]*)\\((\\d+),(\\d+),(\\d+),(\\d+),?(.*?)\\)")
 {
+    TCLAP::CmdLine cmd("LED matrix pp display", ' ', "0.5");
+    playcount = TCLAP::ValueArg<int>("t","top-plays","Number of top plays to get",false,50,"int",cmd);
+    cmd.parse(argc, argv);
+
 	eventQueue = inotify_init();
 	watch = inotify_add_watch(eventQueue, file.c_str(), IN_CLOSE_WRITE | IN_MOVED_TO);
 	parse();
 	readThread = std::thread(&Settings::readLoop, this);
+
 }
 
 Settings::~Settings()
@@ -47,7 +53,13 @@ void Settings::parse()
 {
     std::ifstream fs;
     fs.open(file);
-	fs >> username;
+	std::string uname;
+	fs >> uname;
+	if (uname.compare(username) != 0)
+	{
+		username = uname;
+		topPlays = a.getUserBest(username, playcount);
+	}
 	
 	modes.clear();
     std::string mode;

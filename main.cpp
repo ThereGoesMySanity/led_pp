@@ -1,6 +1,8 @@
 #include <signal.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <getopt.h>
+#include <tclap/CmdLine.h>
 #include "connection.h"
 #include "display.h"
 #include "api.h"
@@ -18,7 +20,6 @@ static void interruptHandler(int signo)
     write(writeInterruptFd, buf, 16);
 }
 
-#define NUM_TOP_PLAYS 50
 bool running;
 int main(int argc, char **argv)
 {
@@ -27,7 +28,6 @@ int main(int argc, char **argv)
     int_handler.sa_flags = 0;
     sigemptyset(&int_handler.sa_mask);
     sigaction(SIGINT, &int_handler, 0);
-    //siginterrupt(SIGINT, 1);
 
     int pipefds[2];
     pipe(pipefds);
@@ -44,9 +44,6 @@ int main(int argc, char **argv)
     Display d(mat);
 
     Settings settings("settings.cfg", &d);
-
-    API a;
-    std::vector<float> top = a.getUserBest(settings.getName(), NUM_TOP_PLAYS);
 
     Connection c;
     bool connected = c.connect();
