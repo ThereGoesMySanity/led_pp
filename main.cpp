@@ -14,7 +14,6 @@ static void interruptHandler(int signo)
 {
     interruptReceived = true;
     char buf[16] = { 1 };
-    printf("Interrupt handler\n");
     write(writeInterruptFd, buf, 16);
 }
 

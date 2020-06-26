@@ -39,7 +39,7 @@ bool Connection::connect() {
     FD_SET(interruptFd, &set);
     if ((select(std::max(server_fd, interruptFd) + 1, &set, NULL, NULL, NULL)) < 0 || FD_ISSET(interruptFd, &set))
     {
-        printf("interrupt on connect %i\n", FD_ISSET(interruptFd, &set));
+        // printf("interrupt on connect %i\n", FD_ISSET(interruptFd, &set));
         return false;
     }
     if((sock = accept(server_fd, (struct sockaddr*)&address,
@@ -50,14 +50,7 @@ bool Connection::connect() {
     printf("connection accepted\n");
     return true;
 }
-/*
-void Connection::test() {
-    int result = read(sock, buffer, 8);
-    printf("%s\n", buffer);
-    char *msg = "test2";
-    send(sock, msg, strlen(msg), 0);
-}
-*/
+
 bool Connection::getData() {
     fd_set set;
     FD_ZERO(&set);

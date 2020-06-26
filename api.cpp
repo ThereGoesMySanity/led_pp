@@ -54,7 +54,7 @@ std::vector<float> API::getUserBest(std::string player, int limit)
     }
     else
     {
-        printf("oops");
+        printf("Error fetching top plays\n");
     }
     return vals;
 }
