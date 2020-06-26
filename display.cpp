@@ -6,6 +6,7 @@ extern bool interruptReceived;
 
 Display::Display(RGBMatrix* mat, Connection* c, Settings* s) : ThreadedCanvasManipulator(mat), settings(s)
 {
+	s->display = this;
 	DataPacket* buf = (DataPacket*)c->bufferAddr();
 	data = { &buf->pp, &buf->hit };
 	font.LoadFont("../rpi-rgb-led-matrix/fonts/6x4-4.bdf");
